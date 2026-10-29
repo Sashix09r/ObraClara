@@ -2,7 +2,8 @@
 
 **Atualizado:** 29/10/2026 (sessão da manhã)
 **Branch:** `ai/obraclara-v2`
-**Último commit publicado:** `df243e2` — “feat: reforçar segurança, corrigir UX e documentar a entrega”
+**Último commit de implementação:** `df243e2` — “feat: reforçar segurança, corrigir UX e documentar a entrega”
+**Nota:** este documento foi atualizado num commit posterior, apenas de documentação.
 **URL da branch:** <https://github.com/Sashix09r/ObraClara/tree/ai/obraclara-v2>
 **`main`:** não foi alterada; não houve merge, force-push nem reset destrutivo.
 
