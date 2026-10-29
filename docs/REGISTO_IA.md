@@ -3,28 +3,36 @@
 > Este documento regista apenas o que é conhecido. Não inventa modelos, planos nem
 > resultados. A conformidade com a regra escolar de “apenas IA gratuita” **não está
 > confirmada** enquanto o professor não esclarecer os pontos assinalados.
+>
+> **Estado do esclarecimento (29/10/2026):** pergunta preparada, ainda não enviada nem
+> respondida. Guião completo em
+> [`ESCLARECIMENTO_IA_PROFESSOR.md`](ESCLARECIMENTO_IA_PROFESSOR.md). Este registo será
+> atualizado com a resposta; não deve ser lido como uma declaração de conformidade.
 
 ## 1. Situações a esclarecer antes da submissão
 
 1. **Protótipo anterior com assistência paga.** Existiu um protótipo ObraClara desenvolvido
-   com apoio de IA paga. A V2 foi construída de raiz nesta pasta; **não foi copiado código
-   desse protótipo**. O facto deve ser comunicado ao professor.
+   com apoio de IA paga. A V2 foi construída de raiz nesta pasta; **não há código desse
+   protótipo na entrega**. O facto é comunicado ao professor e não é apresentado como
+   trabalho sem assistência paga.
 2. **Planeamento com ChatGPT Plus.** O pacote de requisitos e orientação da V2 foi
    preparado e revisto numa conversa com ChatGPT Plus em 29/10/2026, antes desta sessão de
-   implementação. Isso **não é IA exclusivamente gratuita**. É necessário perguntar se a
-   restrição do enunciado abrange o planeamento e, se abranger, refazer essa parte com uma
-   ferramenta gratuita permitida.
+   implementação. Isso **não é IA exclusivamente gratuita**. Pela leitura literal do ponto 2
+   do enunciado — que refere planeamento, código e revisão — a restrição abrange esta fase.
+   A pergunta ao professor é sobre a consequência e a remediação; se ele confirmar que é
+   preciso, o planeamento será refeito com ferramenta gratuita ou sem IA.
 3. **Plano da conta Freebuff.** A implementação decorreu numa sessão Freebuff
    disponibilizada ao utilizador. A interface não mostrou o nome do modelo nem o custo da
    sessão; não é possível afirmar neste documento qual foi o modelo. O utilizador deve
-   confirmar no seletor da conta que a sessão foi gratuita.
+   confirmar no seletor da conta que a sessão foi gratuita. O nome do modelo **não é
+   inventado** para preencher a tabela.
 
 ## 2. Registo da execução real
 
 | Data | Ferramenta / modelo | Acesso | Tarefa | Verificação real | Estado |
 |---|---|---|---|---|---|
-| Antes de 29/10/2026 | Protótipo ObraClara anterior, assistido por IA paga | Pago (histórico) | Protótipo antigo | Não reutilizado na V2 | **A ESCLARECER** |
-| 29/10/2026 | ChatGPT Plus (conversa de planeamento) | Pago (histórico) | Requisitos, prioridades e prompts | Revisão humana; sem código executado | **A ESCLARECER** |
+| Antes de 29/10/2026 | Protótipo ObraClara anterior, assistido por IA paga | Pago (histórico) | Protótipo antigo | Não reutilizado na V2 | **A ESCLARECER** — pergunta preparada |
+| 29/10/2026 | ChatGPT Plus (conversa de planeamento) | Pago (histórico) | Requisitos, prioridades e prompts | Revisão humana; sem código da V2 | **A ESCLARECER** — pergunta preparada |
 | 29/10/2026 | Freebuff Desktop — agente **Buffy**; modelo não identificado na interface | Sessão do utilizador; custo por confirmar | Implementação, revisão, testes, UI e documentação | `php -l`, 25 testes, `curl`, servidor local, capturas | **EXECUTADO**; modelo e custo por confirmar |
 | 29/10/2026 | Chrome headless + PHP built-in server | Ferramentas locais, não IA | Testar e capturar a aplicação real | Capturas em `docs/capturas/` | **EXECUTADO** |
 | 29/10/2026 | Laragon / PHP 8.3.30 / SQLite | Ferramentas locais, não IA | Executar a aplicação e os testes | Versões verificadas no terminal | **EXECUTADO** |
@@ -72,17 +80,33 @@ Estes casos mostram que o resultado não foi aceite sem verificação:
 - Nenhuma chave, token ou conta paga foi usada pela aplicação. A aplicação não chama
   serviços de IA em tempo de execução.
 
-## 5. Texto sugerido para esclarecer com o professor
+## 5. Pergunta ao professor
 
-> “Usei IA para me apoiar no desenvolvimento, como o enunciado permite, mas quero ser
-> transparente: a V2 foi implementada numa sessão Freebuff e o planeamento inicial e um
-> protótipo anterior tiveram assistência de IA paga. Não reutilizei código desse protótipo.
-> Gostaria de saber se a restrição de ‘apenas IA gratuita’ se aplica também ao planeamento
-> e, se for necessário, refaço essa parte com uma ferramenta gratuita. Todo o código foi
-> revisto e testado por mim, e posso explicar as decisões.”
+O texto completo, a versão curta, a versão oral e as respostas às perguntas prováveis estão
+em [`ESCLARECIMENTO_IA_PROFESSOR.md`](ESCLARECIMENTO_IA_PROFESSOR.md). Em resumo:
+
+> “Pela leitura literal do ponto 2, a restrição de IA gratuita parece abranger o planeamento.
+> Usei ChatGPT Plus nessa fase, embora não para escrever o código. A V2 foi feita de raiz e
+> não reutilizei o protótipo anterior, que também teve ajuda paga. Qual é a consequência e o
+> que devo corrigir? Se for preciso, refaço o planeamento com uma ferramenta gratuita e
+> registro a alteração.”
+
+A pergunta **ainda não foi enviada** por este agente. O aluno deve enviá-la e preencher a
+tabela de resposta na secção 7 do guião. Não declarar conformidade antes disso.
+
+### 5.1 O que muda com a resposta
+
+- Se o professor disser que o planeamento está abrangido: criar um planeamento revisto sem
+  IA ou com ferramenta gratuita confirmada, marcar a versão ChatGPT como substituída e
+  atualizar este registo, o relatório e o README.
+- Se disser que o planeamento não conta: registar a resposta e mudar o estado para
+  **ESCLARECIDO**, mantendo a declaração no relatório.
+- Se não houver resposta até 03/11/2026: assumir a leitura literal, refazer o planeamento e
+  entregar com a declaração de transparência; não afirmar conformidade.
 
 ## 6. Referências
 
+- Guião de esclarecimento: [`ESCLARECIMENTO_IA_PROFESSOR.md`](ESCLARECIMENTO_IA_PROFESSOR.md).
 - Enunciado da disciplina: [`00_ENUNCIADO_PROFESSOR.md`](00_ENUNCIADO_PROFESSOR.md), secção 2.
 - Evidências de testes: [`RESULTADOS_TESTES.md`](RESULTADOS_TESTES.md).
 - Estado do projeto: [`08_ESTADO_E_RETOMA.md`](08_ESTADO_E_RETOMA.md).

@@ -27,4 +27,4 @@ Orçamento de obra 8 000 €, mudança de pavimento +650 €.
 - Guardar autor, data e hora da decisão e evento no histórico.
 
 ## Regra de integridade académica
-Usar **exclusivamente funcionalidades e modelos disponibilizados de forma gratuita**. Não recorrer a subscrições, créditos comprados ou API paga. Anotar modelos/ferramentas reais em `docs/REGISTO_IA.md` sem inventar; esclarecer com o professor a assistência paga anterior antes de reutilizar esse protótipo no trabalho entregue. A utilização de ideias gerais não deve ser apresentada como código inteiramente produzido sem assistência.
+Usar **exclusivamente funcionalidades e modelos disponibilizados de forma gratuita**. Não recorrer a subscrições, créditos comprados ou API paga. Anotar modelos/ferramentas reais em `docs/REGISTO_IA.md` sem inventar; esclarecer com o professor a assistência paga anterior (protótipo e planeamento) e não declarar conformidade total antes da resposta. Ver `docs/ESCLARECIMENTO_IA_PROFESSOR.md`. A utilização de ideias gerais não deve ser apresentada como código inteiramente produzido sem assistência.

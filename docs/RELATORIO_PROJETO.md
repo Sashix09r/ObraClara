@@ -343,27 +343,35 @@ EXECUTADO porque o agente não tem dispositivo; o URL e os passos ficam prontos 
 
 ## 12. Uso de IA
 
-O projeto foi desenvolvido com assistência de IA, conforme permitido pelo enunciado, mas
-com uma situação a esclarecer.
+O projeto foi desenvolvido com assistência de IA. Existe uma situação que **pode não cumprir**
+a regra de “apenas IA gratuita” do enunciado, identificada e a aguardar esclarecimento do
+professor. **Este relatório não declara conformidade total** enquanto essa resposta não
+existir.
 
-- **Ferramenta usada nesta implementação:** Freebuff Desktop, agente **Buffy**, em sessão
-  de 29/10/2026. O nome do modelo subjacente não é apresentado na interface, pelo que não
-  é inventado neste relatório. A sessão foi disponibilizada ao utilizador; a confirmação
-  de que não houve cobrança deve ser feita na conta Freebuff.
-- **Tarefas apoiadas:** estrutura do projeto, esquema SQL, serviços e controladores,
-  interface CSS, scripts de instalação/seed, testes automatizados, revisão de segurança
-  e redação da documentação.
-- **Verificação humana/real:** o agente executou `php -l` em todos os ficheiros, a suíte de
-  25 testes, testes HTTP com `curl`, servidor local e capturas reais. O aluno deve
+- **Implementação:** Freebuff Desktop, agente **Buffy**, em sessão de 29/10/2026. O nome do
+  modelo subjacente não é apresentado na interface, pelo que não é inventado neste relatório.
+  A sessão foi disponibilizada ao utilizador; a confirmação de que não houve cobrança deve ser
+  feita na conta Freebuff. A aplicação não chama IA em execução.
+- **Tarefas apoiadas:** estrutura do projeto, esquema SQL, serviços e controladores, interface
+  CSS, scripts de instalação/seed, testes automatizados, revisão de segurança e redação da
+  documentação.
+- **Planeamento:** os requisitos, as prioridades e os prompts foram preparados numa conversa
+  com **ChatGPT Plus**, uma subscrição paga, em 29/10/2026. Essa conversa não escreveu o
+  código da V2. Pela leitura literal do ponto 2 do enunciado — que inclui explicitamente o
+  planeamento — esta fase não é apresentada como IA gratuita.
+- **Protótipo anterior:** teve assistência de IA paga. Não foi reutilizado código desse
+  protótipo na V2; o facto é divulgado e não é contado como trabalho da V2.
+- **Pergunta e remediação:** a mensagem ao professor, a versão oral e o plano de correção
+  estão em [`docs/ESCLARECIMENTO_IA_PROFESSOR.md`](ESCLARECIMENTO_IA_PROFESSOR.md). Se a
+  resposta confirmar que o planeamento está abrangido, essa fase será refeita com uma
+  ferramenta gratuita ou sem IA, com registo da substituição e atualização deste relatório.
+- **Verificação real:** o agente executou `php -l` em todos os ficheiros, a suíte de 25
+  testes, testes HTTP com `curl`, a validação em Apache 2.4.66 e capturas reais. O aluno deve
   compreender e conseguir explicar o código e as decisões.
-- **Histórico a esclarecer:** existe um protótipo anterior com assistência paga e o
-  planeamento inicial foi preparado numa conversa com ChatGPT Plus, conforme
-  [`docs/REGISTO_IA.md`](REGISTO_IA.md). Estes factos não são apresentados como IA
-  exclusivamente gratuita. É necessário esclarecer com o professor se a restrição abrange
-  também o planeamento e, se for caso disso, refazer essa parte com ferramentas gratuitas.
-  Nenhum código do protótipo anterior foi copiado.
 
-O registo detalhado, sem invenções, está em [`docs/REGISTO_IA.md`](REGISTO_IA.md).
+O registo detalhado, sem invenções, está em [`docs/REGISTO_IA.md`](REGISTO_IA.md). A resposta
+do professor e as alterações feitas serão registadas nesse documento e nesta secção antes da
+entrega final.
 
 ---
 
@@ -418,8 +426,9 @@ responsiva. O código está organizado por responsabilidades, tem validação no
 25 testes automatizados executados, além de testes HTTP reais.
 
 O projeto também tornou visível o que ainda falta: teste num telemóvel físico, testes com
-utilizadores reais e o esclarecimento académico sobre assistência de IA anterior.
-Esses pontos estão assumidos, não escondidos, e têm próximos passos concretos.
+utilizadores reais e a resposta do professor sobre a IA paga no planeamento e no protótipo
+anterior. Essa situação está declarada, sem afirmação de conformidade, e tem um plano de
+correção concreto. Os pontos em falta estão assumidos, não escondidos.
 
 ---
 

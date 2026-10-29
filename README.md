@@ -170,6 +170,8 @@ php tests/run.php
 - [`docs/APRESENTACAO_ROTEIRO.md`](docs/APRESENTACAO_ROTEIRO.md) — roteiro de 5–8 minutos.
 - [`docs/RESULTADOS_TESTES.md`](docs/RESULTADOS_TESTES.md) — evidências de testes.
 - [`docs/REGISTO_IA.md`](docs/REGISTO_IA.md) — registo transparente do uso de IA.
+- [`docs/ESCLARECIMENTO_IA_PROFESSOR.md`](docs/ESCLARECIMENTO_IA_PROFESSOR.md) — mensagem
+  ao professor, versão oral e plano de correção da IA paga anterior.
 - [`docs/08_ESTADO_E_RETOMA.md`](docs/08_ESTADO_E_RETOMA.md) — estado e próximos passos.
 
 ---
@@ -190,9 +192,10 @@ php tests/run.php
 - Sem envio de emails, notificações ou anexos.
 - Sem autenticação de dois fatores; proteção de força bruta limitada à sessão.
 - Em produção seria necessário HTTPS, cópias de segurança e gestão de utilizadores.
-- O protótipo anterior e o planeamento tiveram assistência de IA paga; ver
-  [`docs/REGISTO_IA.md`](docs/REGISTO_IA.md) para o esclarecimento que deve ser feito
-  com o professor antes da submissão.
+- O protótipo anterior e o planeamento tiveram assistência de IA paga. A situação está
+  declarada, mas **não se declara conformidade** com a regra de IA gratuita até resposta do
+  professor; ver [`docs/REGISTO_IA.md`](docs/REGISTO_IA.md) e o guião de esclarecimento em
+  [`docs/ESCLARECIMENTO_IA_PROFESSOR.md`](docs/ESCLARECIMENTO_IA_PROFESSOR.md).
 
 ---
 

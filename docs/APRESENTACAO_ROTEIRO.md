@@ -96,9 +96,11 @@ resultado “25/25”.
 
 > “É uma aplicação local, para uma empresa e poucos utilizadores. Não tem pagamentos,
 > faturação certificada nem login de clientes, porque está fora do âmbito. Usei IA no
-> desenvolvimento e nos testes, mas verifiquei tudo com execução real. Há uma assistência
-> anterior paga no planeamento que preciso de esclarecer com o professor; está registada
-> no relatório, não a escondo.”
+> desenvolvimento e o código foi testado com execução real. Mas há uma situação que pode
+> não cumprir a regra de IA gratuita: o planeamento usou ChatGPT Plus e o protótipo
+> anterior teve ajuda paga. Não a apresento como gratuita; já pedi esclarecimento ao
+> professor e, se for preciso, refaço o planeamento com uma ferramenta gratuita. Está tudo
+> no registo.”
 
 ### 7:15–7:45 — Fecho
 
@@ -110,7 +112,7 @@ resultado “25/25”.
 
 ## Tempos e ensaio
 
-O guião foi ensaiado de ponta a ponta em 29/10/2026. O texto falado tem 604 palavras
+O guião foi ensaiado de ponta a ponta em 29/10/2026. O texto falado tem cerca de 610 palavras
 (~4,3 min a 140 palavras/min) e a mecânica ocupa 1,5–2 min; total estimado **6–7 min**.
 O percurso completo por HTTP fez **14 pedidos em 384 ms** numa base descartável; as páginas
 respondem em 6–89 ms. O ensaio encontrou e corrigiu dois saltos de página que escondiam o
@@ -186,9 +188,10 @@ relatórios e testes de acessibilidade com utilizadores reais.
 
 **11. Que parte da IA foi usada e como a verificaram?**
 O agente ajudou a escrever código, CSS, testes e documentação. Cada passo foi executado:
-lint, 25 testes, servidor real, pedidos HTTP e capturas. As sugestões erradas foram
+lint, 25 testes, servidor real, pedidos HTTP, Apache e capturas. As sugestões erradas foram
 corrigidas — por exemplo, a leitura de valores com vírgula e ponto. O histórico de IA paga
-anterior está no registo e será esclarecido.
+anterior está no registo; **não afirmo conformidade** até resposta do professor e, se for
+necessário, refaço o planeamento com uma ferramenta gratuita.
 
 **12. Quanto tempo demorou e o que foi mais difícil?**
 O mais difícil foi acertar as regras de estado e a proteção do orçamento sem duplicar

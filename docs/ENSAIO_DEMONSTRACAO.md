@@ -136,7 +136,7 @@ dominante é o `password_verify` do login (76–89 ms); as páginas autenticadas
 6–25 ms. Isto mede a mecânica, não a fala: a duração da apresentação continua a depender
 do ritmo do aluno.
 
-O texto falado do guião tem **604 palavras** (excluindo títulos e comandos):
+O texto falado do guião tem **cerca de 610 palavras** (excluindo títulos e comandos):
 
 | Ritmo | Tempo estimado de fala |
 |---|---|
@@ -157,7 +157,7 @@ alvo de 5–8, com margem para uma pausa e para o passo opcional do 403.
 | Criar e submeter | 53 | 0,4 min | 1:15 |
 | Decidir | 100 | 0,7 min | 1:30 |
 | Segurança e testes | 74 | 0,5 min | 0:45 |
-| Limitações e IA | 70 | 0,5 min | 0:45 |
+| Limitações e IA | 80 | 0,6 min | 0:45 |
 | Fecho | 35 | 0,2 min | 0:30 |
 
 > Os tempos de fala são estimativas a partir da contagem de palavras; não substituem um

@@ -29,7 +29,7 @@ A aplicação está **funcional e testada localmente**.
 | Capturas reais | 11 imagens em `docs/capturas/` (05 e 07 refeitas após o ensaio) |
 | Ensaio da demonstração | Concluído: guião percorrido, 2 falhas visuais corrigidas |
 | README, manual, relatório, modelo, roteiro | Concluídos |
-| Registo de IA | Atualizado, com pontos a esclarecer |
+| Registo de IA | Atualizado; esclarecimento preparado, aguarda envio/resposta |
 
 **Servidor de demonstração:** `http://localhost:8000` (PHP built-in server em execução).
 Se tiver sido encerrado, arrancar com:
@@ -73,7 +73,8 @@ php tests/run.php     # 25/25, código de saída 0
 - `app/views/` (layout e páginas)
 - `database/schema.sql`, `scripts/install.php`, `scripts/seed.php`, `tests/run.php`
 - `docs/MANUAL_UTILIZACAO.md`, `RELATORIO_PROJETO.md`, `10_MODELO_RELACIONAL.md`,
-  `APRESENTACAO_ROTEIRO.md`, `RESULTADOS_TESTES.md`, `REGISTO_IA.md`
+  `APRESENTACAO_ROTEIRO.md`, `RESULTADOS_TESTES.md`, `REGISTO_IA.md`,
+  `ESCLARECIMENTO_IA_PROFESSOR.md`
 
 ---
 
@@ -100,9 +101,10 @@ Contas fictícias: `gestor@obraclara.pt / Gestor2026!` e
 
 **Pendente humano (único ponto que exige decisão externa):**
 
-1. **Esclarecer com o professor** o histórico de IA paga (protótipo anterior e planeamento
-   com ChatGPT Plus). O texto sugerido está em [`REGISTO_IA.md`](REGISTO_IA.md), secção 5.
-   Não afirmar conformidade total antes desta resposta.
+1. **Enviar ao professor** a mensagem sobre IA paga (protótipo anterior e planeamento com
+   ChatGPT Plus). O texto pronto está em
+   [`ESCLARECIMENTO_IA_PROFESSOR.md`](ESCLARECIMENTO_IA_PROFESSOR.md); registar a resposta
+   na tabela da secção 7 desse guião. Não afirmar conformidade total antes da resposta.
 2. **Passagem cronometrada em voz alta**, feita pelo aluno. O ensaio do agente já validou a
    mecânica e os tempos (≈4,3 min de fala + 1,5–2 min de interação); falta o ritmo real.
 3. **Abrir `http://172.16.58.199/` no telemóvel** na mesma Wi-Fi e confirmar login, menu ☰,
@@ -122,12 +124,14 @@ Contas fictícias: `gestor@obraclara.pt / Gestor2026!` e
 
 Se a sessão for retomada sem instruções novas:
 
-1. Executar `php scripts/seed.php --reset` e `php tests/run.php` para confirmar o estado.
-2. Abrir `http://172.16.58.199/` no telemóvel e registar o resultado (única validação em falta).
-3. Ensaiar em voz alta com cronómetro, seguindo [`APRESENTACAO_ROTEIRO.md`](APRESENTACAO_ROTEIRO.md);
+1. Enviar a mensagem de [`ESCLARECIMENTO_IA_PROFESSOR.md`](ESCLARECIMENTO_IA_PROFESSOR.md)
+   e registar a resposta na secção 7; só depois atualizar `REGISTO_IA.md` e o relatório.
+2. Executar `php scripts/seed.php --reset` e `php tests/run.php` para confirmar o estado.
+3. Abrir `http://172.16.58.199/` no telemóvel e registar o resultado (única validação em falta).
+4. Ensaiar em voz alta com cronómetro, seguindo [`APRESENTACAO_ROTEIRO.md`](APRESENTACAO_ROTEIRO.md);
    o percurso mecânico e as correções já estão validados em `ENSAIO_DEMONSTRACAO.md`.
-4. Verificar no GitHub que a branch `ai/obraclara-v2` contém o commit `8f79754`.
-5. Não alterar `main`, não fazer merge, não usar force-push.
+5. Verificar no GitHub que a branch `ai/obraclara-v2` contém o commit mais recente.
+6. Não alterar `main`, não fazer merge, não usar force-push.
 
 ---
 
