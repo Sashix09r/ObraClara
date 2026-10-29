@@ -1,9 +1,8 @@
 # ESTADO E RETOMA — ObraClara V2
 
-**Atualizado:** 29/10/2026 (sessão da manhã)
+**Atualizado:** 29/10/2026 (sessão da tarde, após ensaio da demonstração)
 **Branch:** `ai/obraclara-v2`
-**Último commit de implementação:** `df243e2` — “feat: reforçar segurança, corrigir UX e documentar a entrega”
-**Nota:** este documento foi atualizado num commit posterior, apenas de documentação.
+**Último commit de implementação:** `8f79754` — “fix: corrigir apresentação após ensaio cronometrado”
 **URL da branch:** <https://github.com/Sashix09r/ObraClara/tree/ai/obraclara-v2>
 **`main`:** não foi alterada; não houve merge, force-push nem reset destrutivo.
 
@@ -26,7 +25,8 @@ A aplicação está **funcional e testada localmente**.
 | Interface responsiva e estados de feedback | Concluída |
 | Testes automatizados | 25/25 passaram, exit 0 |
 | Testes HTTP | Executados e documentados |
-| Capturas reais | 11 imagens em `docs/capturas/` |
+| Capturas reais | 11 imagens em `docs/capturas/` (05 e 07 refeitas após o ensaio) |
+| Ensaio da demonstração | Concluído: guião percorrido, 2 falhas visuais corrigidas |
 | README, manual, relatório, modelo, roteiro | Concluídos |
 | Registo de IA | Atualizado, com pontos a esclarecer |
 
@@ -55,6 +55,10 @@ php tests/run.php     # 25/25, código de saída 0
 - Imutabilidade: trigger recusa alteração de decididas e edição/apagamento de eventos.
 - Testes usam bases descartáveis em `tmp/`; os dados de demonstração não foram usados
   em testes destrutivos. Para a captura de 8 650 € a demo foi aprovada e logo reposta.
+- Ensaio no navegador (T26–T30): criação/submissão, 403 do colaborador, aprovação,
+  rejeição, teclado e ecrã estreito. Detalhe em `RESULTADOS_TESTES.md` e
+  `ENSAIO_DEMONSTRACAO.md`.
+- Percurso do guião por HTTP numa base descartável: **14 pedidos, 384 ms**, final 8 650 €.
 
 ---
 
@@ -98,7 +102,8 @@ Contas fictícias: `gestor@obraclara.pt / Gestor2026!` e
 1. **Esclarecer com o professor** o histórico de IA paga (protótipo anterior e planeamento
    com ChatGPT Plus). O texto sugerido está em [`REGISTO_IA.md`](REGISTO_IA.md), secção 5.
    Não afirmar conformidade total antes desta resposta.
-2. **Ensaio da apresentação** com o roteiro de 7 minutos e reposição dos dados antes.
+2. **Passagem cronometrada em voz alta**, feita pelo aluno. O ensaio do agente já validou a
+   mecânica e os tempos (≈4,3 min de fala + 1,5–2 min de interação); falta o ritmo real.
 3. Confirmar na conta Freebuff que a sessão usada foi gratuita (o modelo não era visível).
 
 **Melhorias não executadas (não são bloqueadores):**
@@ -115,9 +120,9 @@ Contas fictícias: `gestor@obraclara.pt / Gestor2026!` e
 Se a sessão for retomada sem instruções novas:
 
 1. Executar `php scripts/seed.php --reset` e `php tests/run.php` para confirmar o estado.
-2. Abrir `http://localhost:8000` e percorrer o guião de
-   [`APRESENTACAO_ROTEIRO.md`](APRESENTACAO_ROTEIRO.md) uma vez, do início ao fim.
-3. Verificar no GitHub que a branch `ai/obraclara-v2` contém o commit mais recente.
+2. Ensaiar em voz alta com cronómetro, seguindo [`APRESENTACAO_ROTEIRO.md`](APRESENTACAO_ROTEIRO.md);
+   o percurso mecânico e as correções já estão validados em `ENSAIO_DEMONSTRACAO.md`.
+3. Verificar no GitHub que a branch `ai/obraclara-v2` contém o commit `8f79754`.
 4. Não alterar `main`, não fazer merge, não usar force-push.
 
 ---
