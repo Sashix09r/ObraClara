@@ -4,8 +4,8 @@
 **Branch:** `ai/obraclara-v2`
 **Repositório:** <https://github.com/Sashix09r/ObraClara/tree/ai/obraclara-v2>
 **`main`:** não alterada; sem merge, force-push ou reset destrutivo.
-**Commit da implementação:** `b25598d` — *feat: concluir contas, i18n, tutorial e exportação PDF*, publicado em `ai/obraclara-v2`.
-**Verificação remota:** `git ls-remote` e `raw.githubusercontent.com` confirmaram o commit e os ficheiros novos.
+**Commit de código em produção:** `dca6908` — inclui `b25598d` (contas, i18n, tutorial e PDF) e a correção do registo de migrações no seed; publicado em `ai/obraclara-v2`.
+**Verificação remota:** `git ls-remote` e `raw.githubusercontent.com` confirmaram os commits e os ficheiros novos.
 
 ---
 
