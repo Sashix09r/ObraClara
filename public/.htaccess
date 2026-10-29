@@ -1,0 +1,9 @@
+# ObraClara V2 — Laragon/Apache
+# Todas as rotas passam pelo front controller; ficheiros reais são servidos diretamente.
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+
+# Não listar diretórios nem revelar erros PHP ao utilizador.
+Options -Indexes
