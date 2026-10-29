@@ -164,6 +164,8 @@ php tests/run.php
 
 ## 7. Documentação
 
+- [`entregas/`](entregas/) — pacote para o Moodle: relatório e manual em PDF,
+  apresentação em PPTX e PDF, e [LEIA-ME](entregas/README.md) com a lista e as verificações.
 - [`docs/MANUAL_UTILIZACAO.md`](docs/MANUAL_UTILIZACAO.md) — manual com capturas reais.
 - [`docs/RELATORIO_PROJETO.md`](docs/RELATORIO_PROJETO.md) — relatório académico.
 - [`docs/10_MODELO_RELACIONAL.md`](docs/10_MODELO_RELACIONAL.md) — modelo de dados e regras.

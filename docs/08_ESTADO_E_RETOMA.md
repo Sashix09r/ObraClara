@@ -1,6 +1,6 @@
 # ESTADO E RETOMA — ObraClara V2
 
-**Atualizado:** 29/10/2026 (sessão da tarde, após ensaio da demonstração)
+**Atualizado:** 29/10/2026 (sessão da tarde, após ensaio e geração do pacote PDF/PPTX)
 **Branch:** `ai/obraclara-v2`
 **Último commit de implementação:** `8f79754` — “fix: corrigir apresentação após ensaio cronometrado”
 **URL da branch:** <https://github.com/Sashix09r/ObraClara/tree/ai/obraclara-v2>
@@ -29,6 +29,7 @@ A aplicação está **funcional e testada localmente**.
 | Capturas reais | 11 imagens em `docs/capturas/` (05 e 07 refeitas após o ensaio) |
 | Ensaio da demonstração | Concluído: guião percorrido, 2 falhas visuais corrigidas |
 | README, manual, relatório, modelo, roteiro | Concluídos |
+| Pacote PDF/PPTX para o Moodle | Concluído: relatório 15 pp., manual 16 pp., apresentação 10 slides |
 | Registo de IA | Atualizado; esclarecimento preparado, aguarda envio/resposta |
 
 **Servidor de demonstração:** `http://localhost:8000` (PHP built-in server em execução).
@@ -75,6 +76,8 @@ php tests/run.php     # 25/25, código de saída 0
 - `docs/MANUAL_UTILIZACAO.md`, `RELATORIO_PROJETO.md`, `10_MODELO_RELACIONAL.md`,
   `APRESENTACAO_ROTEIRO.md`, `RESULTADOS_TESTES.md`, `REGISTO_IA.md`,
   `ESCLARECIMENTO_IA_PROFESSOR.md`
+- `entregas/ObraClara_V2_Relatorio.pdf`, `ObraClara_V2_Manual.pdf`,
+  `ObraClara_V2_Apresentacao.pptx`, `ObraClara_V2_Apresentacao.pdf` e o ZIP do Moodle
 
 ---
 
@@ -111,6 +114,8 @@ Contas fictícias: `gestor@obraclara.pt / Gestor2026!` e
    ausência de decisão para o colaborador e leitura em cartões. O agente não tem dispositivo
    físico; os passos e o resultado esperado estão em `RESULTADOS_TESTES.md`, secção 3.2.
 4. Confirmar na conta Freebuff que a sessão usada foi gratuita (o modelo não era visível).
+5. **Rever e submeter o pacote de `entregas/` no Moodle.** A capa identifica «aluno do
+   12.º F»; se for exigido o nome impresso, acrescentá-lo antes de submeter.
 
 **Melhorias não executadas (não são bloqueadores):**
 
@@ -131,7 +136,8 @@ Se a sessão for retomada sem instruções novas:
 4. Ensaiar em voz alta com cronómetro, seguindo [`APRESENTACAO_ROTEIRO.md`](APRESENTACAO_ROTEIRO.md);
    o percurso mecânico e as correções já estão validados em `ENSAIO_DEMONSTRACAO.md`.
 5. Verificar no GitHub que a branch `ai/obraclara-v2` contém o commit mais recente.
-6. Não alterar `main`, não fazer merge, não usar force-push.
+6. Abrir `entregas/README.md`, confirmar as contagens e rever os PDFs antes de submeter.
+7. Não alterar `main`, não fazer merge, não usar force-push.
 
 ---
 
@@ -150,3 +156,23 @@ Se a sessão for retomada sem instruções novas:
   (aplicação e testes), `df243e2` (segurança, UX e documentação), `8f79754` (correções do
   ensaio), `a030635` e `e46e7e2` (estado e tempos). O commit da validação Apache é indicado
   no GitHub após este push.
+
+---
+
+## 8. Composição dos documentos de entrega
+
+Os PDFs e o PPTX não foram escritos à mão: foram compostos a partir dos Markdown e das
+11 capturas reais de `docs/capturas/`.
+
+| Passo | Ferramenta | Resultado |
+|---|---|---|
+| Markdown → HTML A4 | Python + `markdown` | Capa, índice, cabeçalhos, tabelas e figuras |
+| HTML → PDF | Playwright + Chromium | PDF A4 com texto pesquisável e ligações internas |
+| Diapositivos | `python-pptx` | 10 slides 16:9 com notas do orador |
+| PPTX → PDF | Microsoft PowerPoint 365 | Cópia fiel da apresentação |
+| Verificação | `pypdf` + inspeção visual | Contagem, páginas em branco, texto e metadados |
+
+Os scripts de composição ficaram em `tmp/` (ignorado pelo Git) e não fazem parte da
+aplicação. Se os Markdown ou as capturas mudarem, os documentos têm de ser recompostos;
+renomear os PDFs antigos não é suficiente. A lista de ficheiros e as verificações estão em
+[`../entregas/README.md`](../entregas/README.md).

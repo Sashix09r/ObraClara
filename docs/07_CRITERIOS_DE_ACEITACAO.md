@@ -50,6 +50,15 @@ apresentação continua em aberto.
 - [x] Perguntas prováveis com respostas corretas
 - [ ] Ensaio cronometrado e apresentação à turma — **PENDENTE HUMANO**
 
+## F. Pacote de entrega
+
+- [x] Relatório em PDF A4, 15 páginas, com texto pesquisável e índice clicável
+- [x] Manual em PDF A4, 16 páginas, com capturas reais e resolução de erros
+- [x] Apresentação em PPTX editável (10 slides, 16:9, com notas do orador) e cópia em PDF
+- [x] Metadados, paginação e verificação de páginas em branco
+- [x] ZIP único para o Moodle, com lista e somas SHA-256
+- [ ] Nome do aluno na capa, se exigido, e revisão final antes da submissão — **PENDENTE HUMANO**
+
 ## Evidência principal
 
 - [`RESULTADOS_TESTES.md`](RESULTADOS_TESTES.md) — 25/25 testes, HTTP e limitações.
@@ -57,3 +66,4 @@ apresentação continua em aberto.
 - [`RELATORIO_PROJETO.md`](RELATORIO_PROJETO.md) — relatório.
 - [`10_MODELO_RELACIONAL.md`](10_MODELO_RELACIONAL.md) — modelo de dados.
 - [`08_ESTADO_E_RETOMA.md`](08_ESTADO_E_RETOMA.md) — estado e próximos passos.
+- [`../entregas/README.md`](../entregas/README.md) — pacote PDF/PPTX e verificações.

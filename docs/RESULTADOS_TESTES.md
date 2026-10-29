@@ -200,6 +200,32 @@ Windows permite `httpd.exe` na firewall e que o Apache está em execução.
 
 ---
 
+## 3.3 Documentos de entrega (PDF/PPTX)
+
+**Data:** 29/10/2026, 12:00–12:22
+**Ficheiros:** `entregas/ObraClara_V2_Relatorio.pdf`, `ObraClara_V2_Manual.pdf`,
+`ObraClara_V2_Apresentacao.pptx`, `ObraClara_V2_Apresentacao.pdf`
+
+| ID | Verificação | Esperado | Obtido | Estado |
+|---|---|---|---|---|
+| D01 | Formato e contagem | A4 no relatório/manual; 16:9 nos slides | 210 × 297 mm; 339 × 190 mm; 15/16/10 páginas | **PASSOU** |
+| D02 | Páginas em branco | Nenhuma | Nenhuma página com menos de 30 caracteres | **PASSOU** |
+| D03 | Texto pesquisável | Valores e testes localizáveis | «8 000,00 €», «8 650,00 €» e «25/25» encontrados por extração | **PASSOU** |
+| D04 | Índice | Ligações internas clicáveis | 41 ligações no relatório e 22 no manual | **PASSOU** |
+| D05 | Notas do orador | Uma nota por diapositivo | 10/10 notas, 197–292 caracteres | **PASSOU** |
+| D06 | Metadados | Título, autor, assunto e palavras-chave | Preenchidos nos três formatos | **PASSOU** |
+| D07 | Inspeção visual | Sem sobreposições; capturas dentro dos limites | Páginas rasterizadas e revistas em folhas de contacto e amostras; corrigidos o login, a caixa «Se aprovar», o rodapé e os enquadramentos | **PASSOU** |
+| D08 | Integridade do ZIP | Abre e contém os seis ficheiros | `testzip()` sem erros; 6 entradas; 3 582 240 bytes; extração e somas conferidas | **PASSOU** |
+| D09 | Somas SHA-256 | `sha256sum -c` válido | 4/4 ficheiros OK, tanto na pasta como após extrair o ZIP | **PASSOU** |
+
+O teste D07 foi visual, não apenas estático: os PDFs foram rasterizados e as páginas
+revistas em folhas de contacto e amostras individuais. Foram corrigidos três problemas
+reais encontrados nessa revisão: a
+imagem do login era na verdade o painel autenticado, o índice estava limitado a dois
+níveis e a caixa «Se aprovar» transbordava no diapositivo 6.
+
+---
+
 ## 4. Correções feitas durante os testes
 
 | Problema encontrado | Correção | Verificação |
