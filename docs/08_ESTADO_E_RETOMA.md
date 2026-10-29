@@ -25,6 +25,7 @@ A aplicação está **funcional e testada localmente**.
 | Interface responsiva e estados de feedback | Concluída |
 | Testes automatizados | 25/25 passaram, exit 0 |
 | Testes HTTP | Executados e documentados |
+| Apache/Laragon com Virtual Host | Validado a 29/10/2026: 15/15 verificações |
 | Capturas reais | 11 imagens em `docs/capturas/` (05 e 07 refeitas após o ensaio) |
 | Ensaio da demonstração | Concluído: guião percorrido, 2 falhas visuais corrigidas |
 | README, manual, relatório, modelo, roteiro | Concluídos |
@@ -104,11 +105,13 @@ Contas fictícias: `gestor@obraclara.pt / Gestor2026!` e
    Não afirmar conformidade total antes desta resposta.
 2. **Passagem cronometrada em voz alta**, feita pelo aluno. O ensaio do agente já validou a
    mecânica e os tempos (≈4,3 min de fala + 1,5–2 min de interação); falta o ritmo real.
-3. Confirmar na conta Freebuff que a sessão usada foi gratuita (o modelo não era visível).
+3. **Abrir `http://172.16.58.199/` no telemóvel** na mesma Wi-Fi e confirmar login, menu ☰,
+   ausência de decisão para o colaborador e leitura em cartões. O agente não tem dispositivo
+   físico; os passos e o resultado esperado estão em `RESULTADOS_TESTES.md`, secção 3.2.
+4. Confirmar na conta Freebuff que a sessão usada foi gratuita (o modelo não era visível).
 
 **Melhorias não executadas (não são bloqueadores):**
 
-- Testar em Apache/Laragon com Virtual Host e em telemóvel físico.
 - Testar Firefox/Safari e leitor de ecrã.
 - Sessão de usabilidade com um colega.
 - Abrir PR de `ai/obraclara-v2` para `main` (sem merge) se o professor o pedir.
@@ -120,10 +123,11 @@ Contas fictícias: `gestor@obraclara.pt / Gestor2026!` e
 Se a sessão for retomada sem instruções novas:
 
 1. Executar `php scripts/seed.php --reset` e `php tests/run.php` para confirmar o estado.
-2. Ensaiar em voz alta com cronómetro, seguindo [`APRESENTACAO_ROTEIRO.md`](APRESENTACAO_ROTEIRO.md);
+2. Abrir `http://172.16.58.199/` no telemóvel e registar o resultado (única validação em falta).
+3. Ensaiar em voz alta com cronómetro, seguindo [`APRESENTACAO_ROTEIRO.md`](APRESENTACAO_ROTEIRO.md);
    o percurso mecânico e as correções já estão validados em `ENSAIO_DEMONSTRACAO.md`.
-3. Verificar no GitHub que a branch `ai/obraclara-v2` contém o commit `8f79754`.
-4. Não alterar `main`, não fazer merge, não usar force-push.
+4. Verificar no GitHub que a branch `ai/obraclara-v2` contém o commit `8f79754`.
+5. Não alterar `main`, não fazer merge, não usar force-push.
 
 ---
 
@@ -132,7 +136,13 @@ Se a sessão for retomada sem instruções novas:
 - O servidor auxiliar de testes (8001) e o proxy temporário de captura (8010) foram
   encerrados; os ficheiros temporários com sessões foram removidos.
 - O servidor de demonstração em 8000 continua ativo.
+- O Apache 2.4.66 do Laragon está em execução manual na porta 80, com o vhost
+  `C:\laragon\etc\apache2\sites-enabled\obraclara-v2.test.conf` e a entrada
+  `127.0.0.1 obraclara-v2.test` no ficheiro `hosts`. Para parar antes de arrancar o
+  Laragon pela interface: `httpd.exe -k shutdown`.
 - As capturas foram geradas a partir da aplicação real com Chrome headless e uma sessão
   autenticada; não são maquetas.
 - O histórico completo do trabalho está nos commits `9373333` (início), `2ff1a5f`
-  (aplicação e testes) e `df243e2` (segurança, UX e documentação).
+  (aplicação e testes), `df243e2` (segurança, UX e documentação), `8f79754` (correções do
+  ensaio), `a030635` e `e46e7e2` (estado e tempos). O commit da validação Apache é indicado
+  no GitHub após este push.

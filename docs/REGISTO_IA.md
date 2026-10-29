@@ -65,8 +65,8 @@ Estes casos mostram que o resultado não foi aceite sem verificação:
 ## 4. Limites do apoio recebido
 
 - O agente não “sabe” o que não testou: os itens não executados estão marcados em
-  [`RESULTADOS_TESTES.md`](RESULTADOS_TESTES.md) (Apache, telemóvel físico, Firefox,
-  leitor de ecrã, usabilidade, carga, HTTPS).
+  [`RESULTADOS_TESTES.md`](RESULTADOS_TESTES.md) (telemóvel físico, Firefox, leitor de
+  ecrã, usabilidade, carga, HTTPS). O Apache foi validado a 29/10/2026.
 - O aluno continua responsável por compreender e explicar o código, a base de dados e as
   decisões de segurança.
 - Nenhuma chave, token ou conta paga foi usada pela aplicação. A aplicação não chama

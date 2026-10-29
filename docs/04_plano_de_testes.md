@@ -19,8 +19,9 @@ Os testes abaixo foram executados. O detalhe, comandos e limitações estão em
 | T11 | Abrir num ecrã pequeno | Layout utilizável | **PASSOU** — captura 500 px e medição a 390 px |
 | T12 | Reabrir a aplicação | Dados continuam guardados | **PASSOU** — T22 |
 
-## Não coberto por este plano
+## Fora do plano automatizado
 
-Apache/Virtual Host, telemóvel físico, Firefox/Safari, leitor de ecrã, teste de
-usabilidade com colega, carga concorrente e HTTPS estão registados como
-**NÃO EXECUTADO** em `RESULTADOS_TESTES.md`.
+O Apache 2.4.66 com Virtual Host foi validado em 29/10/2026 (15/15 verificações, secção
+3.2 de `RESULTADOS_TESTES.md`). Telemóvel físico, Firefox/Safari, leitor de ecrã, teste de
+usabilidade com colega, carga concorrente e HTTPS continuam registados como
+**NÃO EXECUTADO**.

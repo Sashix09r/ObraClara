@@ -42,8 +42,12 @@ C:\laragon\bin\php\php-8.3.30-Win32-vs16-x64\php.exe -S localhost:8000 -t public
 > A raiz pública é **`public/`**. A base de dados fica em `database/obraclara.sqlite`,
 > fora da pasta pública, e nunca é servida por URL.
 >
-> Com Apache/Laragon, configurar o *DocumentRoot* para a pasta `public/` e garantir que
-> `mod_rewrite` está ativo (existe `.htaccess`). O método acima com `php -S` foi o testado.
+> Com Apache/Laragon, o *DocumentRoot* tem de apontar para `public/` e `mod_rewrite`
+> deve estar ativo (o `.htaccess` já está incluído). Validado com Apache 2.4.66 do
+> Laragon num Virtual Host próprio, em `http://obraclara-v2.test`; o vhost automático do
+> Laragon aponta para o protótipo antigo e não deve ser usado. Detalhe e configuração em
+> [`docs/RESULTADOS_TESTES.md`](docs/RESULTADOS_TESTES.md), secção 3.2.
+> O servidor `php -S` continua a ser a via mais rápida para a demonstração.
 
 ### Contas de demonstração (fictícias, apenas locais)
 

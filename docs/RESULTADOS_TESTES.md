@@ -131,6 +131,75 @@ base de demonstração reposta antes e depois. Detalhe em
 
 ---
 
+## 3.2 Apache 2.4.66 do Laragon com Virtual Host
+
+**Data:** 29/10/2026, 11:50–12:05
+**Servidor:** Laragon 8.6.1.60301 · Apache/2.4.66 (Win64) VS18, `mod_php` com PHP 8.3.30,
+`pdo_sqlite`, `sqlite3` e `curl`.
+**Virtual Host:** `C:\laragon\etc\apache2\sites-enabled\obraclara-v2.test.conf`
+
+```apache
+<VirtualHost *:80>
+    ServerName obraclara-v2.test
+    ServerAlias 172.16.58.199
+    DocumentRoot "C:/laragon/www/ObraClaraV2/public"
+    <Directory "C:/laragon/www/ObraClaraV2/public">
+        Options -Indexes
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+```
+
+- Entrada em `C:\Windows\System32\drivers\etc\hosts`: `127.0.0.1 obraclara-v2.test`.
+- `httpd.exe -t` → **Syntax OK**; `httpd.exe -S` lista o vhost e o alias do IP.
+- O vhost automático `auto.ObraClara.test.conf` aponta para o protótipo antigo
+  (`www/ObraClara/public`) e **não foi alterado**. O Apache foi arrancado pelo binário do
+  Laragon; a interface gráfica do Laragon não foi usada.
+- URLs testados: `http://obraclara-v2.test/` e `http://172.16.58.199/`.
+
+| # | Verificação | Resultado observado | Estado |
+|---|---|---|---|
+| 1 | `GET /login` pelo nome | `200`, título «Entrar · ObraClara» | PASSOU |
+| 2 | Cabeçalhos de segurança | CSP, `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy`, `Cache-Control: no-store` | PASSOU |
+| 3 | Estáticos | CSS `200 text/css`, JS `200 text/javascript`, SVG `200 image/svg+xml` | PASSOU |
+| 4 | Rotas privadas sem sessão | `/obras`, `/clientes`, `/historico` → `302 /login` | PASSOU |
+| 5 | Rota inexistente e ficheiro interno | Anónimo → `302`; gestor em `/app/Support/Auth.php` → `404`, sem código fonte | PASSOU |
+| 6 | Listagem de diretório | `/assets/` → `403` (`Options -Indexes`) | PASSOU |
+| 7 | Login do colaborador | `302`; painel «Bom dia, Rui»; obra com 8 000,00 € e 650,00 € | PASSOU |
+| 8 | Colaborador tenta decidir | `403` «Sem permissão» | PASSOU |
+| 9 | Logout por POST | `302 /login` | PASSOU |
+| 10 | Login do gestor e página de decisão | `200`; «Se aprovar: 8 650,00 €» | PASSOU |
+| 11 | Aprovar 650,00 € | `302 /obras/1`; página com **8 650,00 €**, mensagem de sucesso e Ana Ferreira no histórico | PASSOU |
+| 12 | Histórico global | Evento «Aprovada» com valor, autor e data | PASSOU |
+| 13 | Fluxo completo pelo IP `172.16.58.199` | 15/15 verificações iguais às do nome | PASSOU |
+| 14 | Registo de erros do Apache | Apenas o `403` esperado de `/assets/`; sem erros PHP | PASSOU |
+| 15 | Reposição após os testes | `seed.php --reset`; demo em **8 000,00 €** com 650 € pendente | PASSOU |
+
+O teste foi executado com um script PHP temporário (cookie jar e token CSRF reais) e
+repetido pelo IP para confirmar que o URL preparado para o telemóvel não depende do nome.
+
+### Telemóvel físico
+
+**Estado: NÃO EXECUTADO.** O agente não tem um telemóvel nem `adb` acessível e não pode
+operar um dispositivo físico. O que foi validado: o URL da rede local responde `200` a
+partir do próprio PC e o fluxo completo passou por esse IP. Isso **não prova** acesso a
+partir de outro dispositivo (firewall ou isolamento do ponto de acesso podem bloquear).
+
+Para concluir em dois minutos, com o telemóvel na mesma rede Wi-Fi «CSM»:
+
+1. Abrir `http://172.16.58.199/` no browser do telemóvel.
+2. Entrar com `colaborador@obraclara.pt` / `Colab2026!`.
+3. Abrir **Obras → Remodelação T3 — Rua das Flores**; confirmar 8 000,00 € e o menu ☰.
+4. Confirmar que não existe botão «Decidir» e que a tabela se lê em cartões.
+5. Terminar sessão e entrar como gestor; abrir a alteração de 650 € e ver «Se aprovar: 8 650,00 €».
+6. Registar aqui o resultado real do dispositivo (modelo, browser e data).
+
+Se o URL não abrir, verificar que o telemóvel não está numa rede de convidados, que o
+Windows permite `httpd.exe` na firewall e que o Apache está em execução.
+
+---
+
 ## 4. Correções feitas durante os testes
 
 | Problema encontrado | Correção | Verificação |
@@ -150,8 +219,7 @@ base de demonstração reposta antes e depois. Detalhe em
 
 | Item | Motivo | Estado |
 |---|---|---|
-| Instalação em Apache/Laragon com Virtual Host | Foi usado o servidor integrado do PHP; `.htaccess` não foi exercitado em Apache | **NÃO EXECUTADO** |
-| Teste em telemóvel físico | Só foram usados tamanhos de janela em navegador desktop | **NÃO EXECUTADO** |
+| Teste em telemóvel físico | O agente não tem dispositivo nem `adb`; o URL da LAN e o fluxo por IP foram validados no PC. Passos na secção 3.2 | **NÃO EXECUTADO** |
 | Firefox, Safari e Edge | Apenas Chromium (Chrome/Freebuff) | **NÃO EXECUTADO** |
 | Leitor de ecrã (NVDA/VoiceOver) | Fora do tempo disponível | **NÃO EXECUTADO** |
 | Teste de usabilidade com colega | Não houve sessão com terceiros | **NÃO EXECUTADO** |

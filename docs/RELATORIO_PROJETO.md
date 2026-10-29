@@ -330,9 +330,14 @@ Cobertura relevante:
 Testes HTTP confirmaram ainda: login inválido 401, CSRF 419, colaborador 403, obra
 inexistente 404, validação 422, aprovação 302 e orçamento 8 650 € na página.
 
-**O que não foi testado:** Apache com Virtual Host, telemóvel físico, Firefox/Safari,
-leitor de ecrã, teste de usabilidade com um colega e carga concorrente. Está registado
-como NÃO EXECUTADO, sem o apresentar como concluído.
+A aplicação foi também servida pelo **Apache 2.4.66 do Laragon**, com um Virtual Host
+próprio e raiz em `public/`: 15/15 verificações passaram, pelo nome e pelo IP da rede
+local, incluindo login, permissões, decisão, histórico e bloqueio de código interno.
+
+**O que não foi testado:** telemóvel físico, Firefox/Safari, leitor de ecrã, teste de
+usabilidade com um colega e carga concorrente. O telemóvel está registado como NÃO
+EXECUTADO porque o agente não tem dispositivo; o URL e os passos ficam prontos em
+`RESULTADOS_TESTES.md`.
 
 ---
 
@@ -412,8 +417,8 @@ orçamento exato em cêntimos, histórico auditável, dashboard com dados SQL e 
 responsiva. O código está organizado por responsabilidades, tem validação no servidor e
 25 testes automatizados executados, além de testes HTTP reais.
 
-O projeto também tornou visível o que ainda falta: validação em Apache e telemóvel físico,
-testes com utilizadores reais e o esclarecimento académico sobre assistência de IA anterior.
+O projeto também tornou visível o que ainda falta: teste num telemóvel físico, testes com
+utilizadores reais e o esclarecimento académico sobre assistência de IA anterior.
 Esses pontos estão assumidos, não escondidos, e têm próximos passos concretos.
 
 ---
