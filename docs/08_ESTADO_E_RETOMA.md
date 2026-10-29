@@ -3,6 +3,7 @@
 **Atualizado:** 29/10/2026 (sessão da tarde, após ensaio e geração do pacote PDF/PPTX)
 **Branch:** `ai/obraclara-v2`
 **Último commit de implementação:** `8f79754` — “fix: corrigir apresentação após ensaio cronometrado”
+**Pacote de entrega:** commit `83f556e` — PDFs, PPTX e ZIP do Moodle
 **URL da branch:** <https://github.com/Sashix09r/ObraClara/tree/ai/obraclara-v2>
 **`main`:** não foi alterada; não houve merge, force-push nem reset destrutivo.
 
