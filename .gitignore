@@ -1,0 +1,39 @@
+# Segredos e configuração local
+.env
+.env.*
+!.env.example
+/config.local.php
+/config/config.local.php
+
+# Base de dados local, ficheiros de teste e backups
+*.sqlite
+*.sqlite3
+*.db
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm
+*.db-wal
+*.db-shm
+/backups/
+/database/private/
+/database/storage/
+/storage/
+/tmp/
+/tests/tmp/
+
+# Dependências e ficheiros temporários
+/vendor/
+/node_modules/
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Rascunho histórico com conteúdo potencialmente não revisto para divulgação
+/docs/ObraClara_Relatorio_v0.1.docx

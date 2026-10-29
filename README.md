@@ -1,42 +1,38 @@
-# ObraClara
+# ObraClara V2 — aplicação de gestão de alterações a obras
 
-**Projeto de Programação Web — 12.º F, 2026/2027**
+**Projeto académico — Programação Web, 12.º F, 2026/2027.** Apresentação até 05/11/2026.
 
-Aplicação web para pequenas empresas de construção e remodelação registarem obras, propostas de alterações, custos adicionais e respetivas decisões.
+> **Estado em 29/10/2026:** pacote de arranque e instruções para o Freebuff. A pasta `src` inicial está vazia. **Ainda não existe uma aplicação V2 funcional neste ZIP, nem testes V2 executados ou commits V2 publicados**; o agente deverá atualizar este README de forma fiel durante o desenvolvimento.
 
-## Estado atual
-**Fase de planeamento — 23/10/2026.** Ainda não há código funcional nem testes realizados.
+## Começar
+1. Ler `GUIA_COMECAR_AQUI.md`.
+2. Abrir esta pasta no Freebuff Desktop e colar `PROMPT_INICIAL_PARA_COLAR.txt`.
+3. `AGENTS.md` contém requisitos e regras de execução persistentes.
 
-## Problema
-Quando surgem trabalhos adicionais numa obra, os valores e aprovações podem ficar dispersos em mensagens ou registos informais. A ObraClara pretende centralizar essa informação.
+## Resumo do problema
+Pequenas empresas de remodelação precisam de gerir pedidos de trabalhos adicionais, custos e respetivas decisões sem perder o controlo do orçamento. A ObraClara associa clientes, obras, alterações e histórico de aprovações.
 
-## MVP para 05/11/2026
-- Autenticação e perfis de gestor e colaborador.
-- Registo, consulta, atualização e arquivo de clientes e obras.
-- Criação e acompanhamento de alterações.
-- Estados: rascunho, pendente, aprovada, rejeitada.
-- Cálculo do orçamento atualizado a partir de alterações aprovadas.
-- Pesquisa, filtros e dashboard simples.
-- Histórico de decisões e validação de formulários.
-- Dados fictícios de demonstração.
+## Stack pretendida
+PHP 8.3, PDO + SQLite, HTML5/CSS3/JavaScript, Windows/Laragon. Os montantes são guardados como cêntimos inteiros. A raiz do servidor será `public/` e a base de dados ficará fora da pasta pública.
 
-**Fora do âmbito inicial:** pagamentos, emissão de faturas legais, assinatura digital, notificações automáticas, multiempresa e chatbot com IA.
+## GitHub
+Repositório: https://github.com/Sashix09r/ObraClara
+
+- Branch principal `main` — preservada.
+- Branch autorizada `ai/obraclara-v2` — a criar pelo agente e usar para commits/pushes automáticos.
+- Instruções: `docs/06_GITHUB_AUTOMATICO.md` e `scripts/preparar_git_v2.ps1`.
 
 ## Documentação
-- `docs/01_requisitos.md` — regras de negócio e funcionalidades.
-- `docs/02_modelo_conceptual.md` — entidades e relações.
-- `docs/03_ecras_e_fluxos.md` — estrutura da interface.
-- `docs/04_plano_de_testes.md` — testes previstos, ainda não executados.
-- `docs/ObraClara_Relatorio_v0.1.docx` — relatório inicial do trabalho.
+- Enunciado: `docs/00_ENUNCIADO_PROFESSOR.md`.
+- Requisitos iniciais: `docs/01_requisitos.md` a `docs/04_plano_de_testes.md`.
+- Decisões: `docs/05_DECISOES_TECNICAS_E_PRIORIDADES.md`.
+- Git automático: `docs/06_GITHUB_AUTOMATICO.md`.
+- Checklist avaliação: `docs/07_CRITERIOS_DE_ACEITACAO.md`.
+- Etapas: `docs/08_PLANO_AUTONOMO.md` e `docs/08_ESTADO_E_RETOMA.md`.
+- IA: `docs/REGISTO_IA.md`.
 
-## Tecnologias previstas (a confirmar antes de implementar)
-PHP, MySQL/MariaDB, HTML/CSS e Bootstrap. Ambiente local: XAMPP ou Laragon.
+## Instalação, testes e credenciais fictícias
+**Por implementar e validar pelo agente**. Não inventar comandos, credenciais nem resultados enquanto a aplicação não existir.
 
-## Instalação
-A adicionar quando existir uma primeira versão funcional. **Não há ainda uma aplicação executável.**
-
-## Entregáveis
-Aplicação executável, repositório GitHub, screenshots, manual, apresentação e relatório final, até 05/11/2026.
-
-## IA e integridade académica
-O enunciado só permite modelos de IA acessíveis gratuitamente, sem subscrições pagas nem APIs pagas. Todas as ferramentas de IA efetivamente usadas devem ser documentadas com rigor.
+## Integridade académica
+O professor exige IA gratuita. Houve assistência anterior com IA paga; ver `docs/REGISTO_IA.md` para esclarecimento transparente antes da submissão.
