@@ -349,6 +349,7 @@ Windows permite `httpd.exe` na firewall e que o Apache está em execução.
 | `seed.php --reset` não apagava o SQLite no Windows | Libertar `PDO` + `Database::setPdo(null)` antes de `unlink` | Reset executado repetidamente |
 | PDF com acentos | Codificação Windows-1252 e teste de extração | T33; PDF em PT e EN |
 | Migrações em base existente | Cópia de segurança + versões transacionais | T36 |
+| Seed não registava migrações | `seed.php` passou a chamar `Migrator::run()` depois do schema | Base nova com `schema_migrations` = 2 |
 | Capturas antigas desatualizadas | 17 capturas refeitas após a interface final | Inspeção visual |
 
 ---
@@ -412,7 +413,9 @@ ensaios de escrita correram sobre `tmp/e2e-browser.sqlite`.
 | Integridade do manual | `pypdf` + imagens rasterizadas | 23 páginas A4, 20 402 caracteres, 17 imagens, metadados, 0 páginas em branco | **PASSOU** |
 | Capturas | Inspeção das folhas de contacto dos PDFs | Formulários, tutorial, equipa, convites, perfil e registo correspondem à UI atual | **PASSOU** |
 | ZIP do Moodle | `zipfile.testzip()` e listagem | 4 ficheiros, sem corrupção | **PASSOU** |
-| Base de demonstração | Consulta SQL após os ensaios | Continua com 8 000,00 € e a alteração de 650,00 € **pendente**; os ensaios usaram a cópia | **PASSOU** |
+| Seed e migrações | `php scripts/seed.php --reset` numa base nova | 2 utilizadores, 7 alterações e **2 migrações registadas** em `schema_migrations` | **PASSOU** |
+| Base de demonstração | Consulta SQL após os ensaios | Reposta com 2 contas oficiais, 8 000,00 € e a alteração de 650,00 € **pendente**; cópia em `database/backups/obraclara-20261029-170429-pre-reposicao-demo.sqlite` | **PASSOU** |
+| Demo final em 8000 | `curl` com login, painel e PDF | Login 302; “Ana Ferreira”; 8 000,00 €; PDF 200 `application/pdf` e assinatura `%PDF-` | **PASSOU** |
 
 O teste de browser foi o mesmo percurso de 33 passos documentado em 3.5, agora repetido
 contra uma cópia limpa da demo. O formulário móvel e o tutorial a 390 px foram medidos por

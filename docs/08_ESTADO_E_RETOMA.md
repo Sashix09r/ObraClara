@@ -45,8 +45,11 @@ Se tiver sido encerrado:
 php -S localhost:8000 -t public public/router.php
 ```
 
-**Estado da demo:** reposta com `php scripts/seed.php --reset` — obra principal com
-**8 000,00 €** e alteração de **650,00 € pendente**.
+**Estado da demo:** reposta com `php scripts/seed.php --reset` — **2 contas oficiais**
+(gestor e colaborador), 0 convites pendentes, obra principal com **8 000,00 €** e alteração
+de **650,00 € pendente**. As migrações ficam registadas em `schema_migrations` (2 versões).
+Cópias anteriores em `database/backups/`, incluindo
+`obraclara-20261029-170429-pre-reposicao-demo.sqlite`.
 
 ---
 

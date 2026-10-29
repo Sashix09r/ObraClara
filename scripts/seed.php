@@ -16,6 +16,7 @@ declare(strict_types=1);
 require dirname(__DIR__) . '/app/bootstrap.php';
 
 use ObraClara\Support\Database;
+use ObraClara\Support\Migrator;
 
 if (!extension_loaded('pdo_sqlite')) {
     fwrite(STDERR, "ERRO: a extensão pdo_sqlite não está ativa no PHP.\n");
@@ -63,6 +64,10 @@ if ($schema === false) {
     exit(1);
 }
 $pdo->exec($schema);
+
+// O schema já inclui as colunas e tabelas atuais, mas o registo de migrações
+// tem de ficar preenchido para que uma atualização futura saiba o que já correu.
+Migrator::run($pdo);
 
 $nowStamp = '2026-10-29 09:00:00';
 
