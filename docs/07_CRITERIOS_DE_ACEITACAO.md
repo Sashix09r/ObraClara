@@ -1,48 +1,59 @@
-# 07 — Critérios de aceitação alinhados com o professor
+# 07 — Critérios de aceitação (estado real em 29/10/2026)
 
-O enunciado NÃO atribui pontos numéricos individuais a cada dimensão. Não inventar uma distribuição de 200 pontos. O objetivo é cobrir as cinco dimensões indicadas: conteúdo, apresentação, interface, manual e relatório.
+O enunciado não atribui pontos numéricos por dimensão. Esta lista cobre as cinco
+dimensões e só está assinalada com evidência real. O que depende de revisão humana ou de
+apresentação continua em aberto.
 
 ## A. Conteúdo — aplicação real
-- [ ] Problema de uma empresa fictícia de remodelações fundamentado
-- [ ] Modelo relacional persistente (utilizadores, clientes, obras, alterações, eventos)
-- [ ] CRUD de clientes com pesquisa e arquivo
-- [ ] CRUD de obras e associação a clientes
-- [ ] Gestor e colaborador com permissões reais do lado do servidor
-- [ ] Propostas com rascunho, pendente, aprovada e rejeitada
-- [ ] Aprovação soma custo adicional à obra; rejeição não soma
-- [ ] Histórico de quem tomou uma decisão e quando
-- [ ] Dados fictícios de demonstração e cenário dos 8 000 € + 650 €
-- [ ] Validações, integridade, proteção contra CSRF/SQL Injection/XSS
-- [ ] Código GitHub acessível e README para instalação local
+
+- [x] Problema de uma empresa fictícia de remodelações fundamentado
+- [x] Modelo relacional persistente (`users`, `clients`, `projects`, `changes`, `change_events`)
+- [x] CRUD de clientes com pesquisa e arquivo
+- [x] CRUD de obras e associação a cliente ativo
+- [x] Gestor e colaborador com permissões reais no servidor (HTTP 403 testado)
+- [x] Propostas com rascunho, pendente, aprovada e rejeitada
+- [x] Aprovação soma o custo; rejeição não soma (testes T14/T15)
+- [x] Histórico de quem decidiu, quando e com observação
+- [x] Dados fictícios de demonstração e cenário 8 000 € + 650 €
+- [x] Validações, integridade, CSRF, SQL Injection e XSS tratados e testados
+- [x] Código acessível no GitHub e README com instalação testada
 
 ## B. Interface
-- [ ] Navegação clara e consistente; botões com ações reais
-- [ ] Visual profissional e adequado ao domínio
-- [ ] Desktop e mobile utilizáveis; contraste, labels e mensagens
-- [ ] Estados vazios, pesquisas sem resultados, erros e confirmação
+
+- [x] Navegação clara, botões com ações reais e menu responsivo
+- [x] Visual profissional, identidade verde-escura coerente
+- [x] Desktop e ecrã compacto utilizáveis; contraste, labels e mensagens
+- [x] Estados vazios, pesquisas sem resultados, erros e confirmações
+- [ ] Teste de usabilidade com um colega sem explicações — **NÃO EXECUTADO**
 
 ## C. Manual
-- [ ] Procedimentos reais de login, clientes, obras e decisões
-- [ ] Capturas reais dos ecrãs finais (nunca mockups fabricados)
-- [ ] Resolução de erros frequentes e como iniciar a aplicação
+
+- [x] Procedimentos reais de login, clientes, obras e decisões
+- [x] Capturas reais dos ecrãs finais em `docs/capturas/`
+- [x] Resolução de erros frequentes e forma de iniciar a aplicação
 
 ## D. Relatório
-- [ ] Pesquisa do setor e fontes verificáveis
-- [ ] Objetivos, público-alvo, requisitos, tecnologias e justificações
-- [ ] Esquema de BD, relações, arquitetura e regras de negócio
-- [ ] Descrição fiel do que funciona, testes executados e dificuldades
-- [ ] Transparência sobre IA usada, incluindo histórico a esclarecer
-- [ ] Limitações e melhorias futuras
+
+- [x] Contexto do setor com fontes verificáveis (INE, IMPIC)
+- [x] Objetivos, público-alvo, requisitos, tecnologias e justificações
+- [x] Esquema de BD, relações, arquitetura e regras de negócio
+- [x] Descrição fiel do que funciona, testes executados e dificuldades
+- [x] Transparência sobre IA, incluindo histórico pago a esclarecer
+- [x] Limitações e melhorias futuras
+- [ ] Revisão final pelo aluno e esclarecimento com o professor — **PENDENTE HUMANO**
 
 ## E. Apresentação
-- [ ] 5–8 min de narrativa clara com demonstração real
-- [ ] Explicar BD, CRUD, restrições, cálculo de orçamento e tecnologia
-- [ ] Roteiro de recuperação se houver falha de internet/servidor
-- [ ] Questões/respostas sobre segurança, testes e uso da IA
 
-## Prioridade de execução
-- **P0:** Conteúdo funcional e persistente, cenário central, segurança e dados de demo.
-- **P1:** Interface excelente, testes e correções.
-- **P2:** Manual, relatório, GitHub e apresentação, SEM os deixar para o último minuto.
+- [x] Roteiro de 5–8 minutos com demonstração real ([`APRESENTACAO_ROTEIRO.md`](APRESENTACAO_ROTEIRO.md))
+- [x] Explicação de BD, CRUD, restrições, cálculo e tecnologia
+- [x] Plano de recuperação para falha de servidor
+- [x] Perguntas prováveis com respostas corretas
+- [ ] Ensaio cronometrado e apresentação à turma — **PENDENTE HUMANO**
 
-Só assinalar [x] com evidência real no projeto. Manter casos não testados como tal.
+## Evidência principal
+
+- [`RESULTADOS_TESTES.md`](RESULTADOS_TESTES.md) — 25/25 testes, HTTP e limitações.
+- [`MANUAL_UTILIZACAO.md`](MANUAL_UTILIZACAO.md) — manual com capturas.
+- [`RELATORIO_PROJETO.md`](RELATORIO_PROJETO.md) — relatório.
+- [`10_MODELO_RELACIONAL.md`](10_MODELO_RELACIONAL.md) — modelo de dados.
+- [`08_ESTADO_E_RETOMA.md`](08_ESTADO_E_RETOMA.md) — estado e próximos passos.

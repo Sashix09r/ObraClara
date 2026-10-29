@@ -96,3 +96,16 @@ WHEN NEW.status NOT IN ('rascunho', 'pendente', 'aprovada', 'rejeitada')
 BEGIN
     SELECT RAISE(ABORT, 'Estado de alteração inválido.');
 END;
+
+-- O histórico é apenas de inserção: não pode ser reescrito nem apagado.
+CREATE TRIGGER IF NOT EXISTS trg_events_immutable_update
+BEFORE UPDATE ON change_events
+BEGIN
+    SELECT RAISE(ABORT, 'O histórico é imutável.');
+END;
+
+CREATE TRIGGER IF NOT EXISTS trg_events_immutable_delete
+BEFORE DELETE ON change_events
+BEGIN
+    SELECT RAISE(ABORT, 'O histórico é imutável.');
+END;

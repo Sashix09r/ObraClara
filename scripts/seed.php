@@ -41,6 +41,9 @@ if (is_file($path)) {
             exit(1);
         }
 
+        // No Windows o ficheiro fica bloqueado enquanto existir uma referência
+        // à ligação PDO, por isso é necessário libertar as duas referências.
+        unset($pdo);
         Database::setPdo(null);
         gc_collect_cycles();
 

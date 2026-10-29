@@ -27,6 +27,7 @@ $navigation = [
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <title><?= e($title) ?> · ObraClara</title>
+    <link rel="icon" href="<?= e(asset('favicon.svg')) ?>">
     <link rel="stylesheet" href="<?= e(asset('css/app.css')) ?>">
 </head>
 <body class="app">

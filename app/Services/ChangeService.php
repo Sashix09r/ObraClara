@@ -12,9 +12,7 @@ use ObraClara\Support\AuthorizationException;
 use ObraClara\Support\BusinessRuleException;
 use ObraClara\Support\Database;
 use ObraClara\Support\Money;
-use ObraClara\Support\NotFoundException;
 use ObraClara\Support\ValidationException;
-use PDO;
 use Throwable;
 
 /**
@@ -264,17 +262,5 @@ final class ChangeService
     public static function find(int $id): array
     {
         return ChangeRepository::find($id);
-    }
-
-    /** @return list<array<string, mixed>> */
-    public static function history(int $changeId): array
-    {
-        return EventRepository::forChange($changeId);
-    }
-
-    /** @return PDO */
-    public static function pdo(): PDO
-    {
-        return Database::pdo();
     }
 }

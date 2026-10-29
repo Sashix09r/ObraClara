@@ -34,3 +34,21 @@ Referências verificadas em 29/10/2026:
 - https://github.com/CodebuffAI/freebuff/blob/main/README.md
 - https://freebuff.com/blog/freebuff-subagents-deep-dive
 - https://freebuff.com/privacy-policy
+
+---
+
+## Execução real desta sessão (29/10/2026)
+
+Este documento é orientação do pacote inicial, não prova de utilização. Na sessão de
+implementação da V2:
+
+- foi usado o agente **Buffy** no Freebuff Desktop;
+- o nome e o custo do modelo subjacente **não eram visíveis** na interface e por isso não
+  são registados aqui;
+- não foi selecionado conscientemente nenhum modelo marcado como pago, nem foi usada API
+  ou chave externa;
+- a conformidade de custo da conta deve ser confirmada pelo utilizador e registada em
+  `REGISTO_IA.md`.
+
+Os nomes de modelos sugeridos nas secções anteriores não devem ser apresentados como
+“modelos usados” sem essa confirmação.

@@ -9,7 +9,6 @@ use ObraClara\Repositories\ClientRepository;
 use ObraClara\Repositories\ProjectRepository;
 use ObraClara\Support\BusinessRuleException;
 use ObraClara\Support\Money;
-use ObraClara\Support\NotFoundException;
 use ObraClara\Support\ValidationException;
 
 final class ProjectService
@@ -139,16 +138,5 @@ final class ProjectService
     public static function find(int $id): array
     {
         return ProjectRepository::find($id);
-    }
-
-    /** @return list<array<string, mixed>> */
-    public static function changes(int $id): array
-    {
-        return \ObraClara\Repositories\ChangeRepository::forProject($id);
-    }
-
-    public static function notFound(): never
-    {
-        throw new NotFoundException('A obra indicada não existe.');
     }
 }

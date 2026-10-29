@@ -145,21 +145,6 @@ final class ProjectRepository
         return (int) $statement->fetchColumn();
     }
 
-    /** @return array<string, int> */
-    public static function countsByStatus(): array
-    {
-        $rows = Database::pdo()
-            ->query('SELECT status, COUNT(*) AS total FROM projects GROUP BY status')
-            ->fetchAll();
-
-        $counts = ['planeada' => 0, 'em_curso' => 0, 'concluida' => 0, 'arquivada' => 0];
-        foreach ($rows as $row) {
-            $counts[(string) $row['status']] = (int) $row['total'];
-        }
-
-        return $counts;
-    }
-
     /** @return list<string> */
     public static function statuses(): array
     {

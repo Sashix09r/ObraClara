@@ -88,7 +88,13 @@ final class ChangeController extends Controller
     {
         $user = Auth::requireUser();
         $change = ChangeRepository::find($this->id($params));
-        ChangeService::ensureCanEdit($change, $user);
+
+        try {
+            ChangeService::ensureCanEdit($change, $user);
+        } catch (BusinessRuleException $exception) {
+            Flash::error($exception->getMessage());
+            $this->redirect('/obras/' . (int) $change['project_id'] . '#alteracao-' . (int) $change['id']);
+        }
 
         View::page('changes/form', [
             'title'      => 'Editar rascunho',

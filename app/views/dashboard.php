@@ -49,7 +49,7 @@ $greeting = $hour < 12 ? 'Bom dia' : ($hour < 20 ? 'Boa tarde' : 'Boa noite');
         <span class="kpi__icon"><?= icon('check') ?></span>
         <p class="kpi__label">Custos aprovados</p>
         <p class="kpi__value kpi__value--money"><?= e(Money::format((int) $stats['approved_extra'])) ?></p>
-        <p class="kpi__hint">soma das alterações aprovadas</p>
+        <p class="kpi__hint">aprovadas em obras não arquivadas</p>
     </article>
 
     <article class="card kpi kpi--total">

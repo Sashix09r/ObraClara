@@ -36,6 +36,14 @@ if ($documentRoot !== '' && str_starts_with($publicDir, $documentRoot)) {
 
 $GLOBALS['OBRACLARA_BASE'] = $base === '/' ? '' : $base;
 
+// Cabeçalhos de segurança para todas as respostas.
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('Referrer-Policy: same-origin');
+header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
+header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'");
+header('Cache-Control: no-store, no-cache, must-revalidate');
+
 if (!is_file(Database::path())) {
     http_response_code(503);
     require OBRACLARA_ROOT . '/app/views/setup_needed.php';
@@ -106,6 +114,8 @@ try {
     View::error(404, 'Página não encontrada', $exception->getMessage());
 } catch (\ObraClara\Support\AuthorizationException $exception) {
     View::error(403, 'Sem permissão', $exception->getMessage());
+} catch (\ObraClara\Support\BusinessRuleException $exception) {
+    View::error(409, 'Ação não permitida', $exception->getMessage());
 } catch (\Throwable $exception) {
     // Nunca revelar SQL, caminhos ou stacktrace ao utilizador.
     error_log('[ObraClara] ' . $exception->getMessage() . ' @ ' . $exception->getFile() . ':' . $exception->getLine());

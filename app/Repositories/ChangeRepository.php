@@ -113,10 +113,16 @@ final class ChangeRepository
         ]);
     }
 
+    /** Soma aprovada das obras não arquivadas (coerente com o orçamento previsto). */
     public static function approvedTotal(): int
     {
         return (int) Database::pdo()
-            ->query("SELECT COALESCE(SUM(amount_cents), 0) FROM changes WHERE status = 'aprovada'")
+            ->query(
+                "SELECT COALESCE(SUM(ch.amount_cents), 0)
+                   FROM changes ch
+                   INNER JOIN projects p ON p.id = ch.project_id
+                  WHERE ch.status = 'aprovada' AND p.status <> 'arquivada'"
+            )
             ->fetchColumn();
     }
 
@@ -153,16 +159,4 @@ final class ChangeRepository
         return $statement->fetchAll();
     }
 
-    /** @return list<array<string, mixed>> */
-    public static function latestForProject(int $projectId, int $limit = 3): array
-    {
-        $statement = Database::pdo()->prepare(
-            self::SELECT . ' WHERE ch.project_id = :project_id ORDER BY ch.created_at DESC LIMIT :limit'
-        );
-        $statement->bindValue('project_id', $projectId, \PDO::PARAM_INT);
-        $statement->bindValue('limit', $limit, \PDO::PARAM_INT);
-        $statement->execute();
-
-        return $statement->fetchAll();
-    }
 }

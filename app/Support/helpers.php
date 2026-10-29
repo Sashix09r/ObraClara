@@ -128,7 +128,7 @@ function today_label(): string
     $days = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
     $months = ['', 'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 
-    return $days[(int) date('w')] . ', ' . (int) date('j') . ' de ' . $months[(int) date('n')] . ' de ' . date('Y');
+    return ucfirst($days[(int) date('w')]) . ', ' . (int) date('j') . ' de ' . $months[(int) date('n')] . ' de ' . date('Y');
 }
 
 /** Iniciais do utilizador para o avatar. */

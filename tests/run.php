@@ -485,9 +485,11 @@ test('T17', 'Transições inválidas e imutabilidade após decisão', function (
 
     assert_same(865000, ProjectRepository::find($projectId)['updated_budget_cents'], 'valor não mudou');
 
-    // Defesa na base de dados: trigger impede alteração direta.
+    // Defesa na base de dados: triggers impedem alteração direta de valores e histórico.
     $pdo = Database::pdo();
     assert_throws(PDOException::class, fn () => $pdo->exec("UPDATE changes SET amount_cents = 1 WHERE id = {$changeId}"), 'trigger de imutabilidade');
+    assert_throws(PDOException::class, fn () => $pdo->exec("UPDATE change_events SET note = 'reescrito' WHERE change_id = {$changeId}"), 'histórico não pode ser editado');
+    assert_throws(PDOException::class, fn () => $pdo->exec("DELETE FROM change_events WHERE change_id = {$changeId}"), 'histórico não pode ser apagado');
 });
 
 /* --------------------------------------------------------------------------
@@ -625,6 +627,27 @@ test('T24', 'Histórico global inclui autor, obra e transição', function (): v
     assert_same($deciderName, $approved['user_name'], 'nome do decisor');
     assert_same('Renovação do WC', $approved['project_title']);
     assert_same('Aprovado pela gerência.', $approved['note']);
+});
+
+test('T25', 'Acentuação portuguesa preservada na base de dados e no HTML', function (): void {
+    $f = fresh_database();
+
+    $clientId = ClientService::save(null, [
+        'name' => 'Conceição Águas',
+        'notes' => 'Acentuação: ção, ã, é, õ.',
+    ]);
+    $client = ClientRepository::find($clientId);
+    assert_same('Conceição Águas', $client['name']);
+    assert_same('Acentuação: ção, ã, é, õ.', $client['notes']);
+    assert_contains('Conceição', e($client['name']));
+
+    $projectId = ProjectService::save(null, [
+        'client_id' => $f['clients'][1],
+        'title' => 'Remodelação de sótão e cave',
+        'base_budget' => '12 500,00',
+        'status' => 'planeada',
+    ], (int) $f['gestor']['id']);
+    assert_same('Remodelação de sótão e cave', ProjectRepository::find($projectId)['title']);
 });
 
 /* --------------------------------------------------------------------------
