@@ -61,8 +61,9 @@ Se as credenciais estiverem erradas, aparece uma mensagem clara sem revelar qual
 campos falhou. Após cinco tentativas falhadas na mesma sessão, o formulário bloqueia
 temporariamente durante 60 segundos.
 
-Para terminar a sessão, usar o botão de saída no cartão do utilizador, no fundo do
-menu lateral. É um pedido POST protegido por CSRF, não um simples link.
+Para terminar a sessão, usar o botão **Sair** no cartão do utilizador, no fundo do menu
+lateral. É um pedido POST protegido por CSRF, não um simples link. Em ecrãs pequenos, é
+preciso abrir primeiro o menu (☰).
 
 ---
 
@@ -181,6 +182,8 @@ pendentes e rejeitadas não alteram o valor. A própria página explica esta reg
 5. Escolher:
    - **Guardar como rascunho** — fica editável e não conta para o orçamento;
    - **Guardar e submeter** — passa imediatamente a pendente.
+6. Depois de guardar, a página volta ao topo da obra com a confirmação; o rascunho aparece
+   na tabela de alterações.
 
 ### 6.2 Ciclo de vida
 
@@ -205,9 +208,10 @@ Depois disso, a alteração fica bloqueada para edição.
 4. Escrever uma observação. É obrigatória ao rejeitar e fica guardada no histórico.
 5. Clicar **Registar decisão**.
 
-A decisão é definitiva e registada com o nome do gestor e a data/hora. Não é possível
-decidir duas vezes, editar uma alteração decidida ou alterar diretamente o valor na
-base de dados (trigger de proteção).
+A decisão é definitiva e registada com o nome do gestor e a data/hora. Após decidir, a
+página regressa ao topo da obra para mostrar a mensagem e o orçamento atualizado. Não é
+possível decidir duas vezes, editar uma alteração decidida ou alterar diretamente o valor
+na base de dados (trigger de proteção).
 
 Se um colaborador tentar aprovar por um pedido direto ao servidor, recebe
 **403 — Sem permissão**, mesmo que consiga construir o pedido manualmente.

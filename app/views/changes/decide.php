@@ -67,7 +67,7 @@ $afterApproval = (int) $project['updated_budget_cents'] + (int) $change['amount_
         <form method="post" action="<?= e(url('/alteracoes/' . $change['id'] . '/decidir')) ?>" class="form decide-form" novalidate>
             <?= csrf_field() ?>
 
-            <fieldset class="field">
+            <fieldset class="field field--group">
                 <legend>Decisão <span class="required" aria-hidden="true">*</span></legend>
 
                 <?php if (isset($errors['decision'])): ?>

@@ -192,6 +192,22 @@ img, svg { max-width: 100%; }
 .user-card__info strong { font-size: .82rem; color: #f2f8f4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .user-card__info .badge { align-self: flex-start; }
 .user-card__logout { margin-left: auto; }
+.logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, .18);
+    background: rgba(255, 255, 255, .06);
+    color: #d7e8e0;
+    font-family: inherit;
+    font-size: .7rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.logout-btn:hover { background: rgba(255, 255, 255, .15); color: #fff; }
+.logout-btn .icon { width: 14px; height: 14px; }
 .sidebar__note { margin-top: 12px; font-size: .68rem; color: #79a08f; text-align: center; }
 
 .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
@@ -524,6 +540,7 @@ img, svg { max-width: 100%; }
     padding: 0;
 }
 .field legend { margin-bottom: 8px; }
+.field--group { border: 0; margin: 0; padding: 0; min-width: 0; }
 .field input[type="text"],
 .field input[type="email"],
 .field input[type="password"],
@@ -622,6 +639,7 @@ img, svg { max-width: 100%; }
     background: var(--surface);
     transition: border-color .15s ease, background .15s ease;
 }
+.field .choice { padding: 14px; }
 .choice:hover { border-color: #b9c9bf; }
 .choice input {
     grid-column: 1;
@@ -967,6 +985,12 @@ img, svg { max-width: 100%; }
     .record-list__item { flex-direction: column; align-items: flex-start; gap: 6px; }
     .danger-zone { flex-direction: column; align-items: stretch; }
     .danger-zone form .btn { width: 100%; }
+}
+
+@media (max-width: 560px) {
+    .topbar { gap: 10px; padding: 12px 16px; }
+    .topbar__context { font-size: .8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .topbar__date { display: none; }
 }
 
 @media (max-width: 420px) {

@@ -72,8 +72,8 @@ $navigation = [
                     </span>
                     <form method="post" action="<?= e(url('/logout')) ?>" class="user-card__logout">
                         <?= csrf_field() ?>
-                        <button type="submit" class="icon-btn" title="Terminar sessão" aria-label="Terminar sessão">
-                            <?= icon('logout') ?>
+                        <button type="submit" class="logout-btn" title="Terminar sessão">
+                            <?= icon('logout') ?><span>Sair</span>
                         </button>
                     </form>
                 </div>

@@ -60,8 +60,12 @@ Se houver slide, mostrar o diagrama de
 3. Custo: `180,50`.
 4. **Guardar como rascunho**.
 5. Mostrar que o orçamento continua **8 000,00 €** e o estado é **Rascunho**.
-6. Clicar **Submeter** e confirmar.
+6. Clicar **Submeter** e confirmar na caixa de diálogo do browser.
 7. Mostrar estado **Pendente**, ainda 8 000 €.
+
+*Opcional, 15 s — provar a permissão no servidor:* abrir
+`http://localhost:8000/alteracoes/1/decidir` ainda como colaborador. Aparece a página
+**403 “Sem permissão”**. Voltar com o botão do browser.
 
 > “Enquanto pendente, já não pode ser editada. O gestor vai agora analisá-la.”
 
@@ -71,7 +75,7 @@ Se houver slide, mostrar o diagrama de
 2. No painel, abrir **Decidir** na alteração de 650 €.
 3. Mostrar a coluna “Impacto no orçamento”: atualizado hoje 8 000 €, se aprovar 8 650 €.
 4. Escolher **Aprovar**, escrever “Aprovado pelo cliente por telefone” e **Registar decisão**.
-5. Mostrar **8 650,00 €** e **+650,00 €** nos cartões.
+5. A página regressa ao topo: mostrar a mensagem, **+650,00 €** e **8 650,00 €** nos cartões.
 6. Mostrar o histórico: criada, submetida e aprovada por Ana Ferreira, com data e observação.
 7. Abrir **Histórico** e mostrar o evento.
 
@@ -101,6 +105,18 @@ resultado “25/25”.
 > “Em resumo: a ObraClara transforma pedidos dispersos num fluxo com estados, permissões,
 > orçamento exato e histórico. O valor para a empresa é saber sempre quanto custa a obra
 > hoje e porquê.”
+
+---
+
+## Tempos e ensaio
+
+O guião foi ensaiado de ponta a ponta em 29/10/2026. O texto falado tem 604 palavras
+(~4,3 min a 140 palavras/min) e a mecânica ocupa 1,5–2 min; total estimado **6–7 min**.
+O percurso completo por HTTP fez **14 pedidos em 384 ms** numa base descartável; as páginas
+respondem em 6–89 ms. O ensaio encontrou e corrigiu dois saltos de página que escondiam o
+orçamento após criar/decidir, cartões de decisão sem margem e um cabeçalho que quebrava a
+390 px; a saída passou a estar visível como **“Sair”**. Detalhe em
+[`ENSAIO_DEMONSTRACAO.md`](ENSAIO_DEMONSTRACAO.md).
 
 ---
 

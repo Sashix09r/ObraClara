@@ -80,7 +80,8 @@ final class ChangeController extends Controller
                 ? 'Alteração submetida para decisão do gestor.'
                 : 'Rascunho guardado. Podes submetê-lo quando estiver pronto.'
         );
-        $this->redirect('/obras/' . $projectId . '#alteracao-' . $changeId);
+        // Voltar ao topo da obra: a mensagem e o orçamento têm de ficar visíveis.
+        $this->redirect('/obras/' . $projectId);
     }
 
     /** @param array<string, string> $params */
@@ -93,7 +94,7 @@ final class ChangeController extends Controller
             ChangeService::ensureCanEdit($change, $user);
         } catch (BusinessRuleException $exception) {
             Flash::error($exception->getMessage());
-            $this->redirect('/obras/' . (int) $change['project_id'] . '#alteracao-' . (int) $change['id']);
+            $this->redirect('/obras/' . (int) $change['project_id']);
         }
 
         View::page('changes/form', [
@@ -146,7 +147,7 @@ final class ChangeController extends Controller
         }
 
         Flash::success($submit ? 'Alteração atualizada e submetida para decisão.' : 'Rascunho atualizado.');
-        $this->redirect('/obras/' . (int) $change['project_id'] . '#alteracao-' . (int) $change['id']);
+        $this->redirect('/obras/' . (int) $change['project_id']);
     }
 
     /** @param array<string, string> $params */
@@ -162,7 +163,7 @@ final class ChangeController extends Controller
             Flash::error($exception->getMessage());
         }
 
-        $this->redirect('/obras/' . (int) $change['project_id'] . '#alteracao-' . (int) $change['id']);
+        $this->redirect('/obras/' . (int) $change['project_id']);
     }
 
     /** @param array<string, string> $params */
@@ -226,6 +227,7 @@ final class ChangeController extends Controller
                 ? 'Alteração aprovada. O orçamento atualizado da obra foi recalculado.'
                 : 'Alteração rejeitada. O orçamento da obra não foi alterado.'
         );
-        $this->redirect('/obras/' . (int) $project['id'] . '#alteracao-' . (int) $change['id']);
+        // Sem âncora: o gestor tem de ver logo o novo orçamento e a confirmação.
+        $this->redirect('/obras/' . (int) $project['id']);
     }
 }

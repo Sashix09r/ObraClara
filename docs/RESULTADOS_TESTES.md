@@ -94,7 +94,7 @@ Servidor: `php -S localhost:8000 -t public public/router.php`.
 | 5 | Colaborador: `GET /obras/criar` | `403 Sem permissão` | PASSOU |
 | 6 | Colaborador: `GET /clientes/criar` | `403 Sem permissão` | PASSOU |
 | 7 | Colaborador: `POST /alteracoes/1/decidir` | `403`, mensagem “Apenas o gestor pode aprovar ou rejeitar alterações.”, estado mantém-se pendente | PASSOU |
-| 8 | Gestor: aprovar alteração de 650 € | `302 → /obras/1#alteracao-1`; página mostra 8 650,00 €, +650,00 €, “Aprovada”, decisor Ana Ferreira | PASSOU |
+| 8 | Gestor: aprovar alteração de 650 € | `302 → /obras/1` (sem âncora); página abre no topo e mostra 8 650,00 €, +650,00 €, “Aprovada”, decisor Ana Ferreira | PASSOU |
 | 9 | Repetir decisão da mesma alteração | Erro “já tem uma decisão final”; orçamento continua 8 650,00 € | PASSOU |
 | 10 | Rejeitar alteração do WC (obra de 3 200 €) | `302`; obra continua 3 200,00 €; motivo visível na página | PASSOU |
 | 11 | Alteração com valor `-50` | `422` com erro de validação no campo | PASSOU |
@@ -111,12 +111,34 @@ verificado: **8 000,00 €, 650 € pendente**.
 
 ---
 
+## 3.1 Ensaio no navegador (29/10/2026)
+
+Percurso do guião repetido em Chromium, em desktop (1440 px) e ecrã estreito, contra a
+base de demonstração reposta antes e depois. Detalhe em
+[`ENSAIO_DEMONSTRACAO.md`](ENSAIO_DEMONSTRACAO.md).
+
+| ID | Cenário | Esperado | Obtido | Estado |
+|---|---|---|---|---|
+| T26 | Criar e submeter 420,00 € como colaborador | Pendente, orçamento 8 000 € | Pendente; 8 000,00 €; histórico com «Submetida» | **PASSOU** |
+| T27 | Aprovar 650 € e rejeitar 420 € como gestor | 8 650 € e depois manter 8 650 € | 8 650,00 € em ambos; mensagens no topo (`scrollY = 0`) | **PASSOU** |
+| T28 | Layout dos cartões de decisão | Rádio e texto dentro do cartão, com margem | `padding` 14 px, cartão de 93 px, sem sobreposição | **PASSOU** |
+| T29 | Teclado na decisão | Setas mudam a escolha; observação obrigatória ao rejeitar | `ArrowDown` selecionou Rejeitar e ativou `required` | **PASSOU** |
+| T30 | Cabeçalho e menu a 390 px | Sem overflow e barra numa linha | `scrollWidth` 373; barra de 58 px; menu abre e «Sair» visível | **PASSOU** |
+
+**Cronometragem:** o mesmo percurso por HTTP, numa base descartável, fez **14 pedidos em
+384 ms**, terminando em 8 650,00 €. Os pedidos autenticados demoraram 6–25 ms; o login
+76–89 ms (verificação de palavra-passe).
+
+---
+
 ## 4. Correções feitas durante os testes
 
 | Problema encontrado | Correção | Verificação |
 |---|---|---|
 | `--reset` não apagava o SQLite no Windows | A ligação PDO continuava referenciada; passou a `unset($pdo)` + `Database::setPdo(null)` antes do `unlink` | `seed.php --reset` executado com sucesso |
 | Cartões de decisão com o radio sobreposto ao texto | `position:absolute` substituído por CSS Grid de duas colunas | Captura `05-decidir.png` |
+| Cartões sem `padding` e `fieldset` com moldura nativa | A regra `.field label` sobrepunha-se; `.field--group` remove a moldura e `.field .choice` repõe 14 px | `padding` calculado 14 px; captura `05-decidir.png` |
+| Cabeçalho quebrava a data em duas linhas a 390 px | Até 560 px: data oculta, contexto com elipse, barra compacta | Captura `07-mobile-obra.png`; `scrollWidth` 373 |
 | Coluna do dashboard esticada pela grelha | `align-items: start` na grelha | Captura `02-painel.png` |
 | Texto longo numa célula criava overflow a 390 px | Células empilhadas com `flex-wrap` e `overflow-wrap` | Medição `scrollWidth: 373` a 390 px |
 | Data do cabeçalho com todas as palavras capitalizadas | `ucfirst()` no helper e remoção de `text-transform` | Captura do dashboard |
