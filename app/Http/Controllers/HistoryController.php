@@ -16,7 +16,7 @@ final class HistoryController extends Controller
         $user = Auth::requireUser();
 
         View::page('history/index', [
-            'title'  => 'Histórico',
+            'title'  => t('history.title'),
             'nav'    => 'history',
             'user'   => $user,
             'events' => EventRepository::recent(100),

@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use ObraClara\Support\Labels;
-use ObraClara\Support\Money;
 
 /**
  * @var array<string, mixed> $user
@@ -16,19 +15,19 @@ use ObraClara\Support\Money;
  */
 $afterApproval = (int) $project['updated_budget_cents'] + (int) $change['amount_cents'];
 ?>
-<nav class="breadcrumb" aria-label="Localização">
-    <a href="<?= e(url('/obras')) ?>">Obras</a>
+<nav class="breadcrumb" aria-label="<?= e(t('common.location')) ?>">
+    <a href="<?= e(url('/obras')) ?>"><?= e(t('projects.title')) ?></a>
     <span aria-hidden="true">/</span>
     <a href="<?= e(url('/obras/' . $project['id'])) ?>"><?= e($project['title']) ?></a>
     <span aria-hidden="true">/</span>
-    <span>Decidir alteração</span>
+    <span><?= e(t('changes.decide.breadcrumb')) ?></span>
 </nav>
 
 <section class="page-head page-head--tight">
     <div>
-        <p class="eyebrow">Decisão do gestor</p>
-        <h1>Decidir alteração</h1>
-        <p class="text-muted">A decisão é definitiva e fica registada no histórico com o teu nome e a data.</p>
+        <p class="eyebrow"><?= e(t('changes.decide.kicker')) ?></p>
+        <h1><?= e(t('changes.decide.title')) ?></h1>
+        <p class="text-muted"><?= e(t('changes.decide.help')) ?></p>
     </div>
 </section>
 
@@ -38,8 +37,10 @@ $afterApproval = (int) $project['updated_budget_cents'] + (int) $change['amount_
             <div>
                 <h2 id="pedido-title"><?= e($change['title']) ?></h2>
                 <p class="text-muted">
-                    Pedida por <?= e($change['author_name']) ?> ·
-                    submetida em <?= e(format_datetime($change['submitted_at'])) ?>
+                    <?= e(t('changes.decide.requested_by', [
+                        'name' => $change['author_name'],
+                        'date' => format_datetime($change['submitted_at']),
+                    ])) ?>
                 </p>
             </div>
             <span class="badge badge--<?= e($change['status']) ?>"><?= e(Labels::changeStatus($change['status'])) ?></span>
@@ -47,11 +48,11 @@ $afterApproval = (int) $project['updated_budget_cents'] + (int) $change['amount_
 
         <div class="detail-grid">
             <div>
-                <p class="detail-label">Custo adicional pedido</p>
-                <p class="detail-value money money--strong"><?= e(Money::format((int) $change['amount_cents'])) ?></p>
+                <p class="detail-label"><?= e(t('changes.decide.cost')) ?></p>
+                <p class="detail-value money money--strong"><?= e(money((int) $change['amount_cents'])) ?></p>
             </div>
             <div>
-                <p class="detail-label">Obra</p>
+                <p class="detail-label"><?= e(t('changes.decide.project')) ?></p>
                 <p class="detail-value"><a href="<?= e(url('/obras/' . $project['id'])) ?>"><?= e($project['title']) ?></a></p>
                 <p class="cell-sub"><?= e($project['client_name']) ?></p>
             </div>
@@ -59,7 +60,7 @@ $afterApproval = (int) $project['updated_budget_cents'] + (int) $change['amount_
 
         <?php if ($change['description'] !== null): ?>
             <div class="detail-block">
-                <p class="detail-label">Descrição do trabalho</p>
+                <p class="detail-label"><?= e(t('changes.decide.description')) ?></p>
                 <p class="prose"><?= nl2br(e($change['description'])) ?></p>
             </div>
         <?php endif; ?>
@@ -68,7 +69,7 @@ $afterApproval = (int) $project['updated_budget_cents'] + (int) $change['amount_
             <?= csrf_field() ?>
 
             <fieldset class="field field--group">
-                <legend>Decisão <span class="required" aria-hidden="true">*</span></legend>
+                <legend><?= e(t('changes.decide.decision')) ?> <span class="required" aria-hidden="true">*</span></legend>
 
                 <?php if (isset($errors['decision'])): ?>
                     <p class="field__error"><?= e($errors['decision']) ?></p>
@@ -77,58 +78,58 @@ $afterApproval = (int) $project['updated_budget_cents'] + (int) $change['amount_
                 <div class="choice-grid">
                     <label class="choice <?= $decision === 'aprovar' ? 'is-selected' : '' ?>">
                         <input type="radio" name="decision" value="aprovar" <?= $decision === 'aprovar' ? 'checked' : '' ?>>
-                        <span class="choice__title"><?= icon('check') ?> Aprovar</span>
-                        <span class="choice__hint">O custo passa a contar para o orçamento atualizado.</span>
+                        <span class="choice__title"><?= icon('check') ?> <?= e(t('changes.decide.approve')) ?></span>
+                        <span class="choice__hint"><?= e(t('changes.decide.approve_hint')) ?></span>
                     </label>
 
                     <label class="choice <?= $decision === 'rejeitar' ? 'is-selected' : '' ?>">
                         <input type="radio" name="decision" value="rejeitar" <?= $decision === 'rejeitar' ? 'checked' : '' ?>>
-                        <span class="choice__title"><?= icon('close') ?> Rejeitar</span>
-                        <span class="choice__hint">O orçamento da obra mantém-se igual.</span>
+                        <span class="choice__title"><?= icon('close') ?> <?= e(t('changes.decide.reject')) ?></span>
+                        <span class="choice__hint"><?= e(t('changes.decide.reject_hint')) ?></span>
                     </label>
                 </div>
             </fieldset>
 
             <div class="field">
-                <label for="note">Observação da decisão</label>
+                <label for="note"><?= e(t('changes.decide.note')) ?></label>
                 <textarea id="note" name="note" rows="3" maxlength="800"
-                          placeholder="ex.: Aprovado pelo cliente por email em 02/11/2026."
+                          placeholder="<?= e(t('changes.decide.note_placeholder')) ?>"
                           class="<?= field_class($errors, 'note') ?>"
                           <?= isset($errors['note']) ? 'aria-invalid="true" aria-describedby="note-error"' : '' ?>><?= e($note) ?></textarea>
                 <?php if (isset($errors['note'])): ?>
                     <p class="field__error" id="note-error"><?= e($errors['note']) ?></p>
                 <?php endif; ?>
-                <p class="field__help">Obrigatória ao rejeitar. Fica guardada no histórico.</p>
+                <p class="field__help"><?= e(t('changes.decide.note_help')) ?></p>
             </div>
 
             <div class="form-actions">
-                <a class="btn btn--ghost" href="<?= e(url('/obras/' . $project['id'])) ?>">Cancelar</a>
-                <button type="submit" class="btn btn--primary">Registar decisão</button>
+                <a class="btn btn--ghost" href="<?= e(url('/obras/' . $project['id'])) ?>"><?= e(t('common.cancel')) ?></a>
+                <button type="submit" class="btn btn--primary"><?= e(t('changes.decide.register')) ?></button>
             </div>
         </form>
     </section>
 
     <aside class="stack">
         <section class="card budget-card budget-card--total">
-            <p class="budget-card__label">Impacto no orçamento</p>
+            <p class="budget-card__label"><?= e(t('changes.decide.impact')) ?></p>
             <dl class="budget-breakdown">
-                <div><dt>Orçamento base</dt><dd><?= e(Money::format((int) $project['base_budget_cents'])) ?></dd></div>
-                <div><dt>Custos já aprovados</dt><dd><?= e(Money::format((int) $project['approved_cents'])) ?></dd></div>
+                <div><dt><?= e(t('changes.decide.base')) ?></dt><dd><?= e(money((int) $project['base_budget_cents'])) ?></dd></div>
+                <div><dt><?= e(t('changes.decide.approved')) ?></dt><dd><?= e(money((int) $project['approved_cents'])) ?></dd></div>
                 <div class="budget-breakdown__total">
-                    <dt>Atualizado hoje</dt><dd><?= e(Money::format((int) $project['updated_budget_cents'])) ?></dd>
+                    <dt><?= e(t('changes.decide.today')) ?></dt><dd><?= e(money((int) $project['updated_budget_cents'])) ?></dd>
                 </div>
                 <div class="budget-breakdown__future">
-                    <dt>Se aprovar</dt><dd><?= e(Money::format($afterApproval)) ?></dd>
+                    <dt><?= e(t('changes.decide.if_approve')) ?></dt><dd><?= e(money($afterApproval)) ?></dd>
                 </div>
             </dl>
         </section>
 
         <section class="card">
             <header class="card__head">
-                <h2>Histórico da alteração</h2>
+                <h2><?= e(t('changes.decide.history')) ?></h2>
             </header>
             <?php if ($history === []): ?>
-                <p class="text-muted text-sm">Sem eventos registados.</p>
+                <p class="text-muted text-sm"><?= e(t('common.no_events')) ?></p>
             <?php else: ?>
                 <ol class="event-list event-list--compact">
                     <?php foreach ($history as $event): ?>

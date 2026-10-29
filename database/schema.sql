@@ -1,17 +1,58 @@
 -- ObraClara V2 — esquema relacional SQLite
 -- Valores monetários em cêntimos inteiros. Datas em texto ISO (Europe/Lisbon).
+-- Este ficheiro representa uma instalação NOVA. Bases existentes são
+-- atualizadas por app/Support/Migrator.php (migrações incrementais).
 
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS users (
-    id            INTEGER PRIMARY KEY AUTOINCREMENT,
-    name          TEXT    NOT NULL,
-    email         TEXT    NOT NULL UNIQUE COLLATE NOCASE,
-    password_hash TEXT    NOT NULL,
-    role          TEXT    NOT NULL CHECK (role IN ('gestor', 'colaborador')),
-    active        INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1)),
-    created_at    TEXT    NOT NULL
+    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+    name              TEXT    NOT NULL,
+    email             TEXT    NOT NULL UNIQUE COLLATE NOCASE,
+    password_hash     TEXT    NOT NULL,
+    role              TEXT    NOT NULL CHECK (role IN ('gestor', 'colaborador')),
+    active            INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1)),
+    locale            TEXT    NOT NULL DEFAULT 'pt' CHECK (locale IN ('pt', 'en')),
+    tour_completed_at TEXT,
+    last_login_at     TEXT,
+    created_at        TEXT    NOT NULL,
+    updated_at        TEXT
 );
+
+CREATE INDEX IF NOT EXISTS idx_users_role_active ON users (role, active);
+
+CREATE TABLE IF NOT EXISTS invites (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    email       TEXT    NOT NULL COLLATE NOCASE,
+    role        TEXT    NOT NULL CHECK (role IN ('gestor', 'colaborador')),
+    token_hash  TEXT    NOT NULL UNIQUE,
+    expires_at  TEXT    NOT NULL,
+    created_by  INTEGER NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
+    created_at  TEXT    NOT NULL,
+    used_at     TEXT,
+    used_by     INTEGER REFERENCES users (id) ON DELETE RESTRICT,
+    revoked_at  TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_invites_email ON invites (email);
+CREATE INDEX IF NOT EXISTS idx_invites_pending ON invites (used_at, revoked_at, expires_at);
+
+CREATE TABLE IF NOT EXISTS admin_events (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    actor_id    INTEGER NOT NULL REFERENCES users (id) ON DELETE RESTRICT,
+    action      TEXT    NOT NULL CHECK (action IN (
+                    'convite_criado', 'convite_revogado', 'conta_criada',
+                    'perfil_alterado', 'palavra_passe_alterada', 'papel_alterado',
+                    'conta_ativada', 'conta_desativada', 'idioma_alterado'
+                )),
+    target_type TEXT    NOT NULL CHECK (target_type IN ('user', 'invite')),
+    target_id   INTEGER NOT NULL,
+    note        TEXT,
+    created_at  TEXT    NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_admin_events_created ON admin_events (created_at);
+CREATE INDEX IF NOT EXISTS idx_admin_events_target ON admin_events (target_type, target_id);
 
 CREATE TABLE IF NOT EXISTS clients (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -180,7 +180,7 @@ alvo de 5–8, com margem para uma pausa e para o passo opcional do 403.
 ## 5. Regressão após correções
 
 - `php -l` em todos os ficheiros: **sem erros**.
-- `php tests/run.php`: **25/25 passaram**, código de saída **0**.
+- `php tests/run.php`: **38/38 passaram**, código de saída **0** (suíte final, incluindo convites, perfil, PDF, i18n, tutorial e migrações).
 - Testes HTTP mantêm 403 para colaborador, 419 para CSRF inválido e 8650 € após aprovação.
 - Segundo ensaio: aprovação, rejeição, histórico e layout da decisão verificados; capturas
   `05-decidir.png` e `07-mobile-obra.png` refeitas após as correções F4 e F5.

@@ -13,11 +13,14 @@ use ObraClara\Http\Controllers\ChangeController;
 use ObraClara\Http\Controllers\ClientController;
 use ObraClara\Http\Controllers\DashboardController;
 use ObraClara\Http\Controllers\HistoryController;
+use ObraClara\Http\Controllers\ProfileController;
 use ObraClara\Http\Controllers\ProjectController;
+use ObraClara\Http\Controllers\TeamController;
 use ObraClara\Http\Router;
 use ObraClara\Support\Auth;
 use ObraClara\Support\Csrf;
 use ObraClara\Support\Database;
+use ObraClara\Support\Lang;
 use ObraClara\Support\NotFoundException;
 use ObraClara\Support\Session;
 use ObraClara\Support\View;
@@ -51,10 +54,11 @@ if (!is_file(Database::path())) {
 }
 
 Session::start();
+Lang::boot();
 
 // Todos os POST exigem token CSRF válido, sem exceções.
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !Csrf::check($_POST['_token'] ?? null)) {
-    View::error(419, 'Sessão expirada', 'O formulário expirou ou é inválido. Volta atrás, recarrega a página e tenta de novo.');
+    View::error(419, t('errors.419_title'), t('errors.419_text'));
     exit;
 }
 
@@ -64,7 +68,22 @@ $router->get('/', [DashboardController::class, 'index']);
 
 $router->get('/login', [AuthController::class, 'showLogin']);
 $router->post('/login', [AuthController::class, 'login']);
+$router->get('/registar', [AuthController::class, 'showRegister']);
+$router->post('/registar', [AuthController::class, 'register']);
 $router->post('/logout', [AuthController::class, 'logout']);
+
+$router->get('/perfil', [ProfileController::class, 'index']);
+$router->post('/perfil', [ProfileController::class, 'update']);
+$router->post('/perfil/palavra-passe', [ProfileController::class, 'password']);
+$router->post('/perfil/idioma', [ProfileController::class, 'locale']);
+$router->post('/perfil/tutorial', [ProfileController::class, 'completeTour']);
+
+$router->get('/equipa', [TeamController::class, 'index']);
+$router->post('/equipa/convites', [TeamController::class, 'createInvite']);
+$router->post('/equipa/convites/{id}/revogar', [TeamController::class, 'revokeInvite']);
+$router->get('/equipa/utilizadores/{id}', [TeamController::class, 'showUser']);
+$router->post('/equipa/utilizadores/{id}/papel', [TeamController::class, 'setRole']);
+$router->post('/equipa/utilizadores/{id}/estado', [TeamController::class, 'setActive']);
 
 $router->get('/clientes', [ClientController::class, 'index']);
 $router->get('/clientes/criar', [ClientController::class, 'createForm']);
@@ -79,6 +98,7 @@ $router->get('/obras', [ProjectController::class, 'index']);
 $router->get('/obras/criar', [ProjectController::class, 'createForm']);
 $router->post('/obras/criar', [ProjectController::class, 'create']);
 $router->get('/obras/{id}', [ProjectController::class, 'show']);
+$router->get('/obras/{id}/pdf', [ProjectController::class, 'pdf']);
 $router->get('/obras/{id}/editar', [ProjectController::class, 'editForm']);
 $router->post('/obras/{id}/editar', [ProjectController::class, 'edit']);
 $router->post('/obras/{id}/arquivar', [ProjectController::class, 'archive']);
@@ -111,13 +131,13 @@ try {
         header('Location: ' . url('/login'));
         exit;
     }
-    View::error(404, 'Página não encontrada', $exception->getMessage());
+    View::error(404, t('errors.404_title'), $exception->getMessage());
 } catch (\ObraClara\Support\AuthorizationException $exception) {
-    View::error(403, 'Sem permissão', $exception->getMessage());
+    View::error(403, t('errors.403_title'), $exception->getMessage());
 } catch (\ObraClara\Support\BusinessRuleException $exception) {
-    View::error(409, 'Ação não permitida', $exception->getMessage());
+    View::error(409, t('errors.409_title'), $exception->getMessage());
 } catch (\Throwable $exception) {
     // Nunca revelar SQL, caminhos ou stacktrace ao utilizador.
     error_log('[ObraClara] ' . $exception->getMessage() . ' @ ' . $exception->getFile() . ':' . $exception->getLine());
-    View::error(500, 'Algo falhou', 'Ocorreu um erro inesperado. Tenta novamente ou contacta o gestor da aplicação.');
+    View::error(500, t('errors.500_title'), t('errors.500_text'));
 }

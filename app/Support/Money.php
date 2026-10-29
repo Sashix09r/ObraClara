@@ -35,14 +35,14 @@ final class Money
         $value = trim($raw);
 
         if ($value === '') {
-            throw new InvalidArgumentException('Indica um valor em euros.');
+            throw new InvalidArgumentException(t('validation.required_value'));
         }
 
         // Remove espaços (incluindo não separáveis) e o símbolo do euro.
         $value = preg_replace('/[\s\x{00A0}\x{202F}€]/u', '', $value) ?? '';
 
         if ($value === '' || !preg_match('/^\d[\d.,]*$/', $value)) {
-            throw new InvalidArgumentException('Usa apenas números, com vírgula ou ponto para os cêntimos.');
+            throw new InvalidArgumentException(t('validation.numbers_only'));
         }
 
         if (str_contains($value, ',') && str_contains($value, '.')) {
@@ -58,18 +58,18 @@ final class Money
             }
 
             if ($integer === '' || !ctype_digit($integer) || $decimals === '' || !ctype_digit($decimals) || strlen($decimals) > 2) {
-                throw new InvalidArgumentException('O valor deve ter no máximo duas casas decimais.');
+                throw new InvalidArgumentException(t('validation.decimals'));
             }
         } elseif (str_contains($value, ',')) {
             if (substr_count($value, ',') > 1) {
-                throw new InvalidArgumentException('Usa apenas uma vírgula decimal.');
+                throw new InvalidArgumentException(t('validation.one_comma'));
             }
 
             [$integer, $decimals] = explode(',', $value, 2);
             $integer = str_replace('.', '', $integer);
 
             if ($integer === '' || !ctype_digit($integer) || !ctype_digit($decimals) || $decimals === '' || strlen($decimals) > 2) {
-                throw new InvalidArgumentException('O valor deve ter no máximo duas casas decimais.');
+                throw new InvalidArgumentException(t('validation.decimals'));
             }
         } elseif (str_contains($value, '.')) {
             if (preg_match('/^\d{1,3}(?:\.\d{3})+$/', $value) === 1) {
@@ -77,13 +77,13 @@ final class Money
                 $decimals = '0';
             } else {
                 if (substr_count($value, '.') > 1) {
-                    throw new InvalidArgumentException('O valor deve ter no máximo duas casas decimais.');
+                    throw new InvalidArgumentException(t('validation.decimals'));
                 }
 
                 [$integer, $decimals] = explode('.', $value, 2);
 
                 if (!ctype_digit($integer) || !ctype_digit($decimals) || $decimals === '' || strlen($decimals) > 2) {
-                    throw new InvalidArgumentException('O valor deve ter no máximo duas casas decimais.');
+                    throw new InvalidArgumentException(t('validation.decimals'));
                 }
             }
         } else {
@@ -92,7 +92,7 @@ final class Money
         }
 
         if ($integer === '' || strlen($integer) > 9) {
-            throw new InvalidArgumentException('O valor é demasiado elevado.');
+            throw new InvalidArgumentException(t('validation.too_high'));
         }
 
         $cents = ((int) $integer) * 100 + (int) str_pad($decimals, 2, '0');
@@ -102,11 +102,11 @@ final class Money
         }
 
         if ($cents <= 0) {
-            throw new InvalidArgumentException('O valor deve ser superior a zero.');
+            throw new InvalidArgumentException(t('validation.positive'));
         }
 
         if ($cents > self::MAX_CENTS) {
-            throw new InvalidArgumentException('O valor máximo é 99 999 999,99 €.');
+            throw new InvalidArgumentException(t('validation.max'));
         }
 
         return $cents;
@@ -127,6 +127,23 @@ final class Money
             . number_format($euros, 0, ',', ' ')
             . ',' . str_pad((string) $remainder, 2, '0', STR_PAD_LEFT)
             . ' €';
+    }
+
+    /** Formata cêntimos em euros no idioma pedido, sem vírgula flutuante. */
+    public static function formatFor(int $cents, string $locale): string
+    {
+        if ($locale !== 'en') {
+            return self::format($cents);
+        }
+
+        $negative = $cents < 0;
+        $cents = abs($cents);
+        $euros = intdiv($cents, 100);
+        $remainder = $cents % 100;
+
+        return ($negative ? '−' : '') . '€'
+            . number_format($euros, 0, '.', ',')
+            . '.' . str_pad((string) $remainder, 2, '0', STR_PAD_LEFT);
     }
 
     /**

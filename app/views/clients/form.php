@@ -11,17 +11,17 @@ declare(strict_types=1);
  */
 $isEdit = $mode === 'edit';
 ?>
-<nav class="breadcrumb" aria-label="Localização">
-    <a href="<?= e(url('/clientes')) ?>">Clientes</a>
+<nav class="breadcrumb" aria-label="<?= e(t('common.location')) ?>">
+    <a href="<?= e(url('/clientes')) ?>"><?= e(t('clients.title')) ?></a>
     <span aria-hidden="true">/</span>
-    <span><?= $isEdit ? 'Editar' : 'Novo' ?></span>
+    <span><?= e($isEdit ? t('clients.edit_breadcrumb') : t('clients.new_breadcrumb')) ?></span>
 </nav>
 
 <section class="page-head page-head--tight">
     <div>
-        <p class="eyebrow"><?= $isEdit ? 'Atualizar contacto' : 'Novo registo' ?></p>
-        <h1><?= $isEdit ? 'Editar cliente' : 'Novo cliente' ?></h1>
-        <p class="text-muted">O nome é obrigatório. Os restantes dados ajudam no contacto diário.</p>
+        <p class="eyebrow"><?= e($isEdit ? t('clients.edit_kicker') : t('clients.new_kicker')) ?></p>
+        <h1><?= e($isEdit ? t('clients.edit_title') : t('clients.new_title')) ?></h1>
+        <p class="text-muted"><?= e(t('clients.form_help')) ?></p>
     </div>
 </section>
 
@@ -31,7 +31,7 @@ $isEdit = $mode === 'edit';
 
         <div class="form-grid">
             <div class="field field--full">
-                <label for="name">Nome do cliente <span class="required" aria-hidden="true">*</span></label>
+                <label for="name"><?= e(t('clients.name')) ?> <span class="required" aria-hidden="true">*</span></label>
                 <input type="text" id="name" name="name" value="<?= e($client['name'] ?? '') ?>" maxlength="120" required
                        autocomplete="organization"
                        class="<?= field_class($errors, 'name') ?>"
@@ -42,9 +42,9 @@ $isEdit = $mode === 'edit';
             </div>
 
             <div class="field">
-                <label for="contact">Contacto telefónico</label>
+                <label for="contact"><?= e(t('clients.contact')) ?></label>
                 <input type="text" id="contact" name="contact" value="<?= e($client['contact'] ?? '') ?>" maxlength="60"
-                       autocomplete="tel" placeholder="ex.: 912 345 678"
+                       autocomplete="tel" placeholder="<?= e(t('clients.contact_placeholder')) ?>"
                        class="<?= field_class($errors, 'contact') ?>">
                 <?php if (isset($errors['contact'])): ?>
                     <p class="field__error"><?= e($errors['contact']) ?></p>
@@ -52,9 +52,9 @@ $isEdit = $mode === 'edit';
             </div>
 
             <div class="field">
-                <label for="email">Email</label>
+                <label for="email"><?= e(t('clients.email')) ?></label>
                 <input type="email" id="email" name="email" value="<?= e($client['email'] ?? '') ?>" maxlength="150"
-                       autocomplete="email" placeholder="ex.: cliente@exemplo.pt"
+                       autocomplete="email" placeholder="<?= e(t('clients.email_placeholder')) ?>"
                        class="<?= field_class($errors, 'email') ?>">
                 <?php if (isset($errors['email'])): ?>
                     <p class="field__error"><?= e($errors['email']) ?></p>
@@ -62,20 +62,20 @@ $isEdit = $mode === 'edit';
             </div>
 
             <div class="field field--full">
-                <label for="notes">Notas internas</label>
+                <label for="notes"><?= e(t('clients.notes')) ?></label>
                 <textarea id="notes" name="notes" rows="4" maxlength="1500"
-                          placeholder="Preferências de contacto, morada da obra, observações..."
+                          placeholder="<?= e(t('clients.notes_placeholder')) ?>"
                           class="<?= field_class($errors, 'notes') ?>"><?= e($client['notes'] ?? '') ?></textarea>
                 <?php if (isset($errors['notes'])): ?>
                     <p class="field__error"><?= e($errors['notes']) ?></p>
                 <?php endif; ?>
-                <p class="field__help">Máximo 1500 caracteres. Não guardes dados sensíveis desnecessários.</p>
+                <p class="field__help"><?= e(t('clients.notes_help')) ?></p>
             </div>
         </div>
 
         <div class="form-actions">
-            <a class="btn btn--ghost" href="<?= e(url($isEdit ? '/clientes/' . $client['id'] : '/clientes')) ?>">Cancelar</a>
-            <button type="submit" class="btn btn--primary"><?= $isEdit ? 'Guardar alterações' : 'Criar cliente' ?></button>
+            <a class="btn btn--ghost" href="<?= e(url($isEdit ? '/clientes/' . $client['id'] : '/clientes')) ?>"><?= e(t('common.cancel')) ?></a>
+            <button type="submit" class="btn btn--primary"><?= e($isEdit ? t('common.save_changes') : t('clients.create')) ?></button>
         </div>
     </form>
 </section>

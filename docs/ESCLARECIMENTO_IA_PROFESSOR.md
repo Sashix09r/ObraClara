@@ -1,13 +1,19 @@
 # Esclarecimento sobre IA — guião para o professor
 
 **Preparado em:** 29/10/2026
-**Estado:** **preparado, ainda não enviado nem respondido.** Este documento não declara
-conformidade com a regra de IA gratuita. Serve para o aluno enviar a pergunta e registrar a
-resposta com exatidão.
+**Estado (atualização):** a utilização de **ChatGPT Plus no planeamento** foi explicada ao
+professor e, **segundo informação comunicada pelo aluno**, considerada aceitável nessa
+circunstância. A data exata e a resposta literal não ficaram registadas neste repositório e
+**não existe autorização escrita anexada**. Este documento mantém o historial da pergunta e
+das ações de transparência; não transforma a comunicação indireta numa autorização formal.
 
-**Objetivo:** obter uma indicação do professor sobre a utilização de ChatGPT Plus no
-planeamento da V2 e sobre o protótipo anterior com assistência paga; depois, corrigir o que
-for necessário e atualizar o relatório e o registo de IA.
+**Objetivo original:** obter uma indicação do professor sobre a utilização de ChatGPT Plus
+no planeamento da V2 e sobre o protótipo anterior com assistência paga; depois, corrigir o
+que fosse necessário e atualizar o relatório e o registo de IA.
+
+> **Nota:** o texto da secção 3 é o que foi preparado para o esclarecimento. Não é necessário
+> reenviá-lo se o assunto já estiver resolvido; serve como registo. O estado final está em
+> [`REGISTO_IA.md`](REGISTO_IA.md).
 
 ---
 
@@ -48,7 +54,7 @@ pedir autorização retroativa.
 
 ---
 
-## 3. Mensagem pronta a enviar (email ou Moodle)
+## 3. Mensagem preparada (registo histórico)
 
 > **Assunto:** Esclarecimento sobre utilização de IA — ObraClara V2 (12.º F)
 >
@@ -75,7 +81,7 @@ pedir autorização retroativa.
 > gratuita (ou sem IA), substituo a versão no registo e explico a alteração no relatório. Se
 > houver alguma penalização, aceito e registro.
 >
-> O código, os 25 testes automatizados, os testes HTTP, a validação em Apache, o histórico do
+> O código, os 38 testes automatizados, os testes HTTP, a validação em Apache, o histórico do
 > repositório e o registo de IA estão disponíveis para verificação. Posso explicar as
 > decisões e mostrar o que foi alterado.
 >
@@ -144,7 +150,11 @@ factos.
 
 ---
 
-## 6. Cenários de resposta e ações
+## 6. Cenários de resposta e ações (quadro de referência)
+
+> O cenário aplicado foi o de **esclarecimento aceitável**, segundo a informação do aluno,
+> sem documento escrito. Os restantes cenários ficam como referência para uma futura
+> confirmação formal; não são o estado atual.
 
 | Resposta do professor | Interpretação | Ações concretas |
 |---|---|---|
@@ -160,19 +170,19 @@ parecer que a IA paga não existiu. A remediação é documentada, não apagada.
 
 ---
 
-## 7. Registo da resposta (preencher quando chegar)
+## 7. Registo do esclarecimento
 
 | Campo | Registo |
 |---|---|
-| Data e hora | |
-| Canal (email, Moodle, presencial) | |
-| Resposta literal ou resumo fiel | |
-| Decisão: planeamento abrangido? | |
-| Decisão: protótipo abrangido? | |
-| Ações decididas | |
-| Documentos atualizados | |
-| Commit / push | |
-| Quem confirmou | |
+| Data e hora | não registada neste repositório |
+| Canal (email, Moodle, presencial) | comunicado ao aluno; canal não documentado |
+| Resposta literal ou resumo fiel | não existe citação literal; o aluno comunicou que a utilização de ChatGPT Plus no planeamento foi considerada aceitável nessa circunstância |
+| Decisão: planeamento abrangido? | esclarecido como aceitável, segundo o aluno; sem autorização escrita |
+| Decisão: protótipo abrangido? | não foi registada uma decisão específica; o protótipo não foi reutilizado |
+| Ações decididas | manter a declaração transparente; não apresentar a IA paga como gratuita; atualizar relatório e registo |
+| Documentos atualizados | `REGISTO_IA.md`, `RELATORIO_PROJETO.md`, `README.md`, este guião |
+| Commit / push | branch `ai/obraclara-v2` |
+| Quem confirmou | aluno; sem documento escrito anexado |
 
 Guardar a mensagem original (email/print) fora do repositório público se contiver dados
 pessoais; no repositório, registar apenas o essencial.

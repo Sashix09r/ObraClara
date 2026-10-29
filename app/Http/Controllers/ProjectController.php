@@ -7,6 +7,7 @@ namespace ObraClara\Http\Controllers;
 use ObraClara\Repositories\ClientRepository;
 use ObraClara\Repositories\EventRepository;
 use ObraClara\Repositories\ProjectRepository;
+use ObraClara\Services\ProjectPdfService;
 use ObraClara\Services\ProjectService;
 use ObraClara\Support\Auth;
 use ObraClara\Support\BusinessRuleException;
@@ -25,7 +26,7 @@ final class ProjectController extends Controller
         $status = isset($_GET['estado']) && is_string($_GET['estado']) ? trim($_GET['estado']) : '';
 
         View::page('projects/index', [
-            'title'    => 'Obras',
+            'title'    => t('projects.title'),
             'nav'      => 'projects',
             'user'     => $user,
             'projects' => ProjectRepository::search($query, $status),
@@ -40,7 +41,7 @@ final class ProjectController extends Controller
         $user = Auth::requireManager();
 
         if (ClientRepository::allActive() === []) {
-            Flash::error('Cria primeiro um cliente ativo para poderes associar a obra.');
+            Flash::error(t('flash.project_create_client'));
             $this->redirect('/clientes/criar');
         }
 
@@ -52,7 +53,7 @@ final class ProjectController extends Controller
             'base_budget'    => '',
             'start_date'     => '',
             'status'         => 'planeada',
-        ], [], '/obras/criar', 'Nova obra', $user);
+        ], [], '/obras/criar', t('projects.new_title'), $user);
     }
 
     /** @param array<string, string> $params */
@@ -63,12 +64,12 @@ final class ProjectController extends Controller
         try {
             $id = ProjectService::save(null, $_POST, (int) $user['id']);
         } catch (ValidationException $exception) {
-            $this->renderForm(422, 'create', $this->formData($_POST), $exception->errors(), '/obras/criar', 'Nova obra', $user);
+            $this->renderForm(422, 'create', $this->formData($_POST), $exception->errors(), '/obras/criar', t('projects.new_title'), $user);
 
             return;
         }
 
-        Flash::success('Obra criada com sucesso.');
+        Flash::success(t('flash.project_created'));
         $this->redirect('/obras/' . $id);
     }
 
@@ -98,6 +99,24 @@ final class ProjectController extends Controller
     }
 
     /** @param array<string, string> $params */
+    public function pdf(array $params = []): void
+    {
+        Auth::requireUser();
+        $id = $this->id($params);
+        $project = ProjectRepository::find($id);
+        $changes = \ObraClara\Repositories\ChangeRepository::forProject($id);
+        $pdf = ProjectPdfService::generate($project, $changes);
+        $filename = 'ObraClara-obra-' . $id . '.pdf';
+
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Length: ' . strlen($pdf));
+        header('Cache-Control: private, no-store, max-age=0');
+        echo $pdf;
+        exit;
+    }
+
+    /** @param array<string, string> $params */
     public function editForm(array $params = []): void
     {
         $user = Auth::requireManager();
@@ -105,7 +124,7 @@ final class ProjectController extends Controller
         $project = ProjectRepository::find($id);
 
         if ($project['status'] === 'arquivada') {
-            Flash::error('Reativa a obra antes de a editares.');
+            Flash::error(t('flash.project_needs_reactivate'));
             $this->redirect('/obras/' . $id);
         }
 
@@ -117,7 +136,7 @@ final class ProjectController extends Controller
             'base_budget' => \ObraClara\Support\Money::toInput((int) $project['base_budget_cents']),
             'start_date'  => $project['start_date'] ?? '',
             'status'      => $project['status'],
-        ], [], '/obras/' . $id . '/editar', 'Editar obra', $user);
+        ], [], '/obras/' . $id . '/editar', t('projects.edit_title'), $user);
     }
 
     /** @param array<string, string> $params */
@@ -130,12 +149,12 @@ final class ProjectController extends Controller
         try {
             ProjectService::save($id, $_POST, (int) $user['id']);
         } catch (ValidationException $exception) {
-            $this->renderForm(422, 'edit', $this->formData($_POST) + ['id' => $id], $exception->errors(), '/obras/' . $id . '/editar', 'Editar obra', $user);
+            $this->renderForm(422, 'edit', $this->formData($_POST) + ['id' => $id], $exception->errors(), '/obras/' . $id . '/editar', t('projects.edit_title'), $user);
 
             return;
         }
 
-        Flash::success('Obra atualizada.');
+        Flash::success(t('flash.project_updated'));
         $this->redirect('/obras/' . $id);
     }
 
@@ -147,7 +166,7 @@ final class ProjectController extends Controller
 
         try {
             ProjectService::archive($id);
-            Flash::success('Obra arquivada. Os dados e o histórico mantêm-se.');
+            Flash::success(t('flash.project_archived'));
         } catch (BusinessRuleException $exception) {
             Flash::error($exception->getMessage());
         }
@@ -163,7 +182,7 @@ final class ProjectController extends Controller
 
         try {
             ProjectService::reactivate($id);
-            Flash::success('Obra reativada no estado «Planeada».');
+            Flash::success(t('flash.project_reactivated'));
         } catch (BusinessRuleException $exception) {
             Flash::error($exception->getMessage());
         }

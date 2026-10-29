@@ -58,7 +58,7 @@ final class View
             <p class="empty-state__code"><?= e((string) $status) ?></p>
             <h1><?= e($heading) ?></h1>
             <p><?= e($message) ?></p>
-            <a class="btn btn--primary" href="<?= e(url('/')) ?>">Voltar ao painel</a>
+            <a class="btn btn--primary" href="<?= e(url('/')) ?>"><?= e(t('errors.back_dashboard')) ?></a>
         </section>
         <?php
         $content = (string) ob_get_clean();

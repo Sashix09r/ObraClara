@@ -32,24 +32,24 @@ final class ProjectService
         $status = trim((string) ($input['status'] ?? 'planeada'));
 
         if ($clientId === false || $clientId === null || $clientId <= 0) {
-            $errors['client_id'] = 'Escolhe o cliente da obra.';
+            $errors['client_id'] = t('validation.project_client');
         } else {
             $client = ClientRepository::find((int) $clientId);
             if ($client === null) {
-                $errors['client_id'] = 'O cliente escolhido não existe.';
+                $errors['client_id'] = t('validation.project_client_missing');
             } elseif ((int) $client['active'] !== 1) {
-                $errors['client_id'] = 'O cliente está arquivado. Reativa-o ou escolhe outro.';
+                $errors['client_id'] = t('validation.project_client_archived');
             }
         }
 
         if ($title === '') {
-            $errors['title'] = 'Indica um título para a obra.';
+            $errors['title'] = t('validation.project_title');
         } elseif (mb_strlen($title) > 150) {
-            $errors['title'] = 'O título não pode exceder 150 caracteres.';
+            $errors['title'] = t('validation.project_title_long');
         }
 
         if (mb_strlen($description) > 2000) {
-            $errors['description'] = 'A descrição não pode exceder 2000 caracteres.';
+            $errors['description'] = t('validation.description_long');
         }
 
         $budgetCents = 0;
@@ -62,7 +62,7 @@ final class ProjectService
         if ($startDate !== '') {
             $parsed = \DateTimeImmutable::createFromFormat('!Y-m-d', $startDate);
             if ($parsed === false || $parsed->format('Y-m-d') !== $startDate) {
-                $errors['start_date'] = 'Indica uma data válida.';
+                $errors['start_date'] = t('validation.date_invalid');
             }
         }
 
@@ -108,16 +108,13 @@ final class ProjectService
         $project = ProjectRepository::find($id);
 
         if ($project['status'] === 'arquivada') {
-            throw new BusinessRuleException('Esta obra já está arquivada.');
+            throw new BusinessRuleException(t('validation.project_already_archived'));
         }
 
         $pending = ProjectRepository::pendingChangeCount($id);
 
         if ($pending > 0) {
-            throw new BusinessRuleException(
-                'Não é possível arquivar: existem ' . $pending
-                . ' alteração(ões) pendente(s) por decidir. Decide-as primeiro.'
-            );
+            throw new BusinessRuleException(t('validation.project_pending', ['count' => $pending]));
         }
 
         ProjectRepository::setStatus($id, 'arquivada');
@@ -128,7 +125,7 @@ final class ProjectService
         $project = ProjectRepository::find($id);
 
         if ($project['status'] !== 'arquivada') {
-            throw new BusinessRuleException('Esta obra não está arquivada.');
+            throw new BusinessRuleException(t('validation.project_not_archived'));
         }
 
         ProjectRepository::setStatus($id, 'planeada');

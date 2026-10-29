@@ -17,7 +17,7 @@ final class DashboardController extends Controller
         $stats = DashboardService::stats();
 
         View::page('dashboard', [
-            'title' => 'Painel',
+            'title' => t('nav.dashboard'),
             'nav'   => 'dashboard',
             'user'  => $user,
             'stats' => $stats,

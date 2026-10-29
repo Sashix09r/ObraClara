@@ -60,7 +60,7 @@ final class ProjectRepository
         $project = $statement->fetch();
 
         if (!$project) {
-            throw new NotFoundException('A obra indicada não existe.');
+            throw new NotFoundException(t('validation.project_not_found'));
         }
 
         return self::withBudget($project);

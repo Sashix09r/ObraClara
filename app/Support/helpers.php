@@ -14,6 +14,17 @@ function e(mixed $value): string
  * Constrói um URL interno respeitando a pasta onde a aplicação está instalada.
  * Ex.: url('/obras/3') -> /ObraClaraV2/public/obras/3 quando instalada em subpasta.
  */
+/** Traduz uma chave do dicionário ativo. */
+function t(string $key, array $params = []): string
+{
+    return \ObraClara\Support\Lang::t($key, $params);
+}
+
+function current_locale(): string
+{
+    return \ObraClara\Support\Lang::locale();
+}
+
 function url(string $path = '/'): string
 {
     $base = $GLOBALS['OBRACLARA_BASE'] ?? '';
@@ -57,7 +68,13 @@ function format_datetime(?string $value): string
 
     $timestamp = strtotime($value);
 
-    return $timestamp === false ? '—' : date('d/m/Y H:i', $timestamp);
+    if ($timestamp === false) {
+        return '—';
+    }
+
+    return \ObraClara\Support\Lang::locale() === 'en'
+        ? date('d M Y, H:i', $timestamp)
+        : date('d/m/Y H:i', $timestamp);
 }
 
 function format_date(?string $value): string
@@ -68,13 +85,19 @@ function format_date(?string $value): string
 
     $timestamp = strtotime($value);
 
-    return $timestamp === false ? '—' : date('d/m/Y', $timestamp);
+    if ($timestamp === false) {
+        return '—';
+    }
+
+    return \ObraClara\Support\Lang::locale() === 'en'
+        ? date('d M Y', $timestamp)
+        : date('d/m/Y', $timestamp);
 }
 
-/** Formata cêntimos em euros (pt-PT). */
+/** Formata cêntimos em euros no idioma ativo. */
 function money(int $cents): string
 {
-    return \ObraClara\Support\Money::format($cents);
+    return \ObraClara\Support\Money::formatFor($cents, \ObraClara\Support\Lang::locale());
 }
 
 /** Campo oculto com o token CSRF, obrigatório em todos os formulários POST. */
@@ -86,7 +109,7 @@ function csrf_field(): string
 /** URL de um recurso estático com versão para evitar cache antigo. */
 function asset(string $path): string
 {
-    return url('/assets/' . ltrim($path, '/')) . '?v=2';
+    return url('/assets/' . ltrim($path, '/')) . '?v=3';
 }
 
 /**
@@ -112,6 +135,16 @@ function icon(string $name, string $class = 'icon'): string
         'clock'     => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
         'money'     => '<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M7 9v6M17 9v6"/>',
         'alert'     => '<path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5M12 17.5v.5"/>',
+        'team'      => '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M16 8h5M18.5 5.5v5"/>',
+        'profile'   => '<circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3-6 7-6s7 2.4 7 6"/>',
+        'help'      => '<circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 3.8 2.1c-.9.6-1.4 1.1-1.4 2.2"/><path d="M12 17h.01"/>',
+        'pdf'       => '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 16h4"/>',
+        'globe'     => '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.7 5.7 3.7 9S14.5 18.3 12 21c-2.5-2.7-3.7-5.7-3.7-9S9.5 5.7 12 3Z"/>',
+        'lock'      => '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+        'mail'      => '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
+        'link'      => '<path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/>',
+        'user'      => '<circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3-6 7-6s7 2.4 7 6"/>',
+        'eye'       => '<path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.6"/>',
     ];
 
     $body = $paths[$name] ?? $paths['dashboard'];
@@ -122,9 +155,13 @@ function icon(string $name, string $class = 'icon'): string
 }
 
 
-/** Data de hoje em português, para o cabeçalho. */
+/** Data de hoje no idioma ativo, para o cabeçalho. */
 function today_label(): string
 {
+    if (\ObraClara\Support\Lang::locale() === 'en') {
+        return date('l, j F Y');
+    }
+
     $days = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
     $months = ['', 'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 

@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use ObraClara\Support\Labels;
-use ObraClara\Support\Money;
 
 /**
  * @var array<string, mixed> $user
@@ -32,72 +31,89 @@ foreach ($eventsByChange as $events) {
     $totalEvents += count($events);
 }
 ?>
-<nav class="breadcrumb" aria-label="Localização">
-    <a href="<?= e(url('/obras')) ?>">Obras</a>
+<nav class="breadcrumb" aria-label="<?= e(t('common.location')) ?>">
+    <a href="<?= e(url('/obras')) ?>"><?= e(t('projects.show.breadcrumb')) ?></a>
     <span aria-hidden="true">/</span>
     <a href="<?= e(url('/clientes/' . $project['client_id'])) ?>"><?= e($project['client_name']) ?></a>
     <span aria-hidden="true">/</span>
     <span><?= e($project['title']) ?></span>
 </nav>
 
-<section class="page-head">
+<section class="page-head" data-tour-id="project-header"
+         data-tour-title="<?= e(t('tour.project_header_title')) ?>"
+         data-tour-text="<?= e(t('tour.project_header_text')) ?>">
     <div>
         <div class="page-head__meta">
             <span class="badge badge--<?= e($project['status']) ?>"><?= e(Labels::projectStatus($project['status'])) ?></span>
             <?php if ($project['start_date'] !== null): ?>
-                <span class="text-muted text-sm">Início <?= e(format_date($project['start_date'])) ?></span>
+                <span class="text-muted text-sm"><?= e(t('projects.show.start', ['date' => format_date($project['start_date'])])) ?></span>
             <?php endif; ?>
         </div>
         <h1><?= e($project['title']) ?></h1>
         <p class="text-muted">
-            Cliente: <a href="<?= e(url('/clientes/' . $project['client_id'])) ?>"><?= e($project['client_name']) ?></a>
+            <?= e(t('projects.show.client')) ?> <a href="<?= e(url('/clientes/' . $project['client_id'])) ?>"><?= e($project['client_name']) ?></a>
         </p>
     </div>
     <div class="page-head__actions">
         <?php if (!$isArchived): ?>
-            <a class="btn btn--primary" href="<?= e(url('/obras/' . $project['id'] . '/alteracoes/criar')) ?>">
-                <?= icon('plus') ?> Nova alteração
+            <a class="btn btn--primary" href="<?= e(url('/obras/' . $project['id'] . '/alteracoes/criar')) ?>"
+               data-tour-id="project-new"
+               data-tour-title="<?= e(t('tour.project_new_title')) ?>"
+               data-tour-text="<?= e(t('tour.project_new_text')) ?>">
+                <?= icon('plus') ?> <?= e(t('projects.show.new_change')) ?>
             </a>
         <?php endif; ?>
         <?php if ($isManager): ?>
-            <a class="btn btn--ghost" href="<?= e(url('/obras/' . $project['id'] . '/editar')) ?>"><?= icon('edit') ?> Editar obra</a>
+            <a class="btn btn--ghost" href="<?= e(url('/obras/' . $project['id'] . '/editar')) ?>"><?= icon('edit') ?> <?= e(t('projects.show.edit')) ?></a>
         <?php endif; ?>
+        <a class="btn btn--ghost" href="<?= e(url('/obras/' . $project['id'] . '/pdf')) ?>"
+           data-tour-id="project-export" title="<?= e(t('projects.show.export_help')) ?>"
+           data-tour-title="<?= e(t('tour.project_export_title')) ?>"
+           data-tour-text="<?= e(t('tour.project_export_text')) ?>">
+            <?= icon('pdf') ?> <?= e(t('projects.show.export_pdf')) ?>
+        </a>
     </div>
 </section>
 
-<div class="budget-grid">
+<div class="budget-grid" data-tour-id="project-budgets"
+     data-tour-title="<?= e(t('tour.project_budgets_title')) ?>"
+     data-tour-text="<?= e(t('tour.project_budgets_text')) ?>">
     <article class="card budget-card">
-        <p class="budget-card__label">Orçamento base</p>
-        <p class="budget-card__value"><?= e(Money::format((int) $project['base_budget_cents'])) ?></p>
-        <p class="budget-card__hint">Valor contratado inicialmente</p>
+        <p class="budget-card__label"><?= e(t('projects.show.base')) ?></p>
+        <p class="budget-card__value"><?= e(money((int) $project['base_budget_cents'])) ?></p>
+        <p class="budget-card__hint"><?= e(t('projects.show.base_hint')) ?></p>
     </article>
     <article class="card budget-card">
-        <p class="budget-card__label">Custos aprovados</p>
-        <p class="budget-card__value">+ <?= e(Money::format((int) $project['approved_cents'])) ?></p>
-        <p class="budget-card__hint"><?= e((string) $approvedCount) ?> alteração(ões) aprovada(s)</p>
+        <p class="budget-card__label"><?= e(t('projects.show.approved')) ?></p>
+        <p class="budget-card__value">+ <?= e(money((int) $project['approved_cents'])) ?></p>
+        <p class="budget-card__hint"><?= e(t('projects.show.approved_count', ['count' => $approvedCount])) ?></p>
     </article>
     <article class="card budget-card budget-card--total">
-        <p class="budget-card__label">Orçamento atualizado</p>
-        <p class="budget-card__value"><?= e(Money::format((int) $project['updated_budget_cents'])) ?></p>
-        <p class="budget-card__hint">Base + alterações aprovadas</p>
+        <p class="budget-card__label"><?= e(t('projects.show.total')) ?></p>
+        <p class="budget-card__value"><?= e(money((int) $project['updated_budget_cents'])) ?></p>
+        <p class="budget-card__hint"><?= e(t('projects.show.total_hint')) ?></p>
     </article>
 </div>
 
 <?php if ($project['description'] !== null): ?>
     <section class="card card--quiet">
-        <h2 class="section-title">Âmbito da obra</h2>
+        <h2 class="section-title"><?= e(t('projects.show.scope')) ?></h2>
         <p class="prose"><?= nl2br(e($project['description'])) ?></p>
     </section>
 <?php endif; ?>
 
-<section class="card" aria-labelledby="alteracoes-title">
+<section class="card" aria-labelledby="alteracoes-title" data-tour-id="project-changes"
+         data-tour-title="<?= e(t('tour.project_changes_title')) ?>"
+         data-tour-text="<?= e(t('tour.project_changes_text')) ?>">
     <header class="card__head">
         <div>
-            <h2 id="alteracoes-title">Alterações ao âmbito</h2>
+            <h2 id="alteracoes-title"><?= e(t('projects.show.changes')) ?></h2>
             <p class="text-muted">
-                <?= e((string) count($changes)) ?> no total ·
-                <?= e((string) $pendingCount) ?> pendente(s) ·
-                <?= e((string) $draftCount) ?> rascunho(s)
+                <?= e(t('projects.show.changes_summary', [
+                    'total' => count($changes),
+                    'pending' => $pendingCount,
+                    'drafts' => $draftCount,
+                ])) ?>
             </p>
         </div>
         <span class="count-pill"><?= e((string) count($changes)) ?></span>
@@ -106,10 +122,10 @@ foreach ($eventsByChange as $events) {
     <?php if ($changes === []): ?>
         <div class="empty-state">
             <span class="empty-state__icon"><?= icon('projects') ?></span>
-            <h3>Ainda não existem alterações</h3>
-            <p>Registe um trabalho adicional ou uma alteração de material para submeter ao gestor.</p>
+            <h3><?= e(t('projects.show.no_changes')) ?></h3>
+            <p><?= e(t('projects.show.no_changes_hint')) ?></p>
             <?php if (!$isArchived): ?>
-                <a class="btn btn--primary" href="<?= e(url('/obras/' . $project['id'] . '/alteracoes/criar')) ?>">Criar alteração</a>
+                <a class="btn btn--primary" href="<?= e(url('/obras/' . $project['id'] . '/alteracoes/criar')) ?>"><?= e(t('projects.show.create_change')) ?></a>
             <?php endif; ?>
         </div>
     <?php else: ?>
@@ -117,11 +133,11 @@ foreach ($eventsByChange as $events) {
             <table class="table table--changes">
                 <thead>
                     <tr>
-                        <th scope="col">Alteração</th>
-                        <th scope="col" class="text-right">Valor</th>
-                        <th scope="col">Estado</th>
-                        <th scope="col">Registo</th>
-                        <th scope="col" class="text-right">Ações</th>
+                        <th scope="col"><?= e(t('projects.show.col_change')) ?></th>
+                        <th scope="col" class="text-right"><?= e(t('projects.show.col_value')) ?></th>
+                        <th scope="col"><?= e(t('projects.show.col_state')) ?></th>
+                        <th scope="col"><?= e(t('projects.show.col_record')) ?></th>
+                        <th scope="col" class="text-right"><?= e(t('projects.show.col_actions')) ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -131,49 +147,55 @@ foreach ($eventsByChange as $events) {
                             && ($isManager || (int) $change['created_by'] === (int) $user['id']);
                         ?>
                         <tr id="alteracao-<?= e((string) $change['id']) ?>">
-                            <td data-label="Alteração">
+                            <td data-label="<?= e(t('projects.show.col_change')) ?>">
                                 <strong><?= e($change['title']) ?></strong>
                                 <?php if ($change['description'] !== null): ?>
                                     <span class="cell-sub"><?= e(mb_strimwidth($change['description'], 0, 110, '…')) ?></span>
                                 <?php endif; ?>
                                 <?php if ($change['status'] === 'pendente'): ?>
-                                    <span class="cell-sub cell-sub--note">Pendente: ainda não conta para o orçamento.</span>
+                                    <span class="cell-sub cell-sub--note"><?= e(t('projects.show.pending_note')) ?></span>
                                 <?php endif; ?>
                             </td>
-                            <td data-label="Valor" class="text-right money money--strong"><?= e(Money::format((int) $change['amount_cents'])) ?></td>
-                            <td data-label="Estado">
+                            <td data-label="<?= e(t('projects.show.col_value')) ?>" class="text-right money money--strong"><?= e(money((int) $change['amount_cents'])) ?></td>
+                            <td data-label="<?= e(t('projects.show.col_state')) ?>">
                                 <span class="badge badge--<?= e($change['status']) ?>"><?= e(Labels::changeStatus($change['status'])) ?></span>
                             </td>
-                            <td data-label="Registo">
+                            <td data-label="<?= e(t('projects.show.col_record')) ?>">
                                 <span class="text-sm"><?= e($change['author_name']) ?></span>
                                 <span class="cell-sub"><?= e(format_datetime($change['created_at'])) ?></span>
                                 <?php if ($change['decided_at'] !== null): ?>
                                     <span class="cell-sub">
-                                        Decidida por <?= e($change['decider_name'] ?? '—') ?> em <?= e(format_datetime($change['decided_at'])) ?>
+                                        <?= e(t('projects.show.decided_by', [
+                                            'name' => $change['decider_name'] ?? '—',
+                                            'date' => format_datetime($change['decided_at']),
+                                        ])) ?>
                                     </span>
                                 <?php endif; ?>
                             </td>
-                            <td data-label="Ações" class="text-right action-cell">
+                            <td data-label="<?= e(t('projects.show.col_actions')) ?>" class="text-right action-cell">
                                 <?php if ($change['status'] === 'rascunho' && $canEdit): ?>
-                                    <a class="btn btn--sm btn--ghost" href="<?= e(url('/alteracoes/' . $change['id'] . '/editar')) ?>"><?= icon('edit') ?> Editar</a>
+                                    <a class="btn btn--sm btn--ghost" href="<?= e(url('/alteracoes/' . $change['id'] . '/editar')) ?>"><?= icon('edit') ?> <?= e(t('common.edit')) ?></a>
                                     <form method="post" action="<?= e(url('/alteracoes/' . $change['id'] . '/submeter')) ?>"
-                                          data-confirm="Submeter «<?= e($change['title']) ?>» ao gestor? Depois de submetida, a alteração deixa de poder ser editada.">
+                                          data-confirm="<?= e(t('projects.show.submit_confirm', ['title' => $change['title']])) ?>">
                                         <?= csrf_field() ?>
-                                        <button type="submit" class="btn btn--sm btn--primary">Submeter</button>
+                                        <button type="submit" class="btn btn--sm btn--primary"><?= e(t('projects.show.submit')) ?></button>
                                     </form>
                                 <?php elseif ($change['status'] === 'pendente' && $isManager): ?>
-                                    <a class="btn btn--sm btn--primary" href="<?= e(url('/alteracoes/' . $change['id'] . '/decidir')) ?>">Decidir</a>
+                                    <a class="btn btn--sm btn--primary" href="<?= e(url('/alteracoes/' . $change['id'] . '/decidir')) ?>"
+                                       data-tour-id="project-decide"
+                                       data-tour-title="<?= e(t('tour.project_changes_title')) ?>"
+                                       data-tour-text="<?= e(t('tour.project_changes_text')) ?>"><?= e(t('projects.show.decide')) ?></a>
                                 <?php elseif ($change['status'] === 'pendente'): ?>
-                                    <span class="text-muted text-sm">Aguarda gestor</span>
+                                    <span class="text-muted text-sm"><?= e(t('projects.show.waiting')) ?></span>
                                 <?php else: ?>
-                                    <span class="text-muted text-sm">Sem ações</span>
+                                    <span class="text-muted text-sm"><?= e(t('common.no_actions')) ?></span>
                                 <?php endif; ?>
                             </td>
                         </tr>
                         <?php if ($change['decided_at'] !== null && $change['decision_note'] !== null): ?>
                             <tr class="row-note">
                                 <td colspan="5">
-                                    <strong>Observação da decisão:</strong> <?= e($change['decision_note']) ?>
+                                    <strong><?= e(t('projects.show.observation')) ?></strong> <?= e($change['decision_note']) ?>
                                 </td>
                             </tr>
                         <?php endif; ?>
@@ -181,24 +203,24 @@ foreach ($eventsByChange as $events) {
                 </tbody>
             </table>
         </div>
-        <p class="table-footnote">
-            Apenas alterações aprovadas entram no orçamento atualizado. Rascunhos e pendentes não alteram o valor.
-        </p>
+        <p class="table-footnote"><?= e(t('projects.show.table_note')) ?></p>
     <?php endif; ?>
 </section>
 
-<section class="card" aria-labelledby="historico-obra">
+<section class="card" aria-labelledby="historico-obra" data-tour-id="project-history"
+         data-tour-title="<?= e(t('tour.project_history_title')) ?>"
+         data-tour-text="<?= e(t('tour.project_history_text')) ?>">
     <header class="card__head">
         <div>
-            <h2 id="historico-obra">Histórico da obra</h2>
-            <p class="text-muted">Registo imutável de criação, submissão e decisão, com autor e data.</p>
+            <h2 id="historico-obra"><?= e(t('projects.show.history')) ?></h2>
+            <p class="text-muted"><?= e(t('projects.show.history_hint')) ?></p>
         </div>
         <span class="count-pill"><?= e((string) $totalEvents) ?></span>
     </header>
 
     <?php if ($totalEvents === 0): ?>
         <div class="empty-state empty-state--sm">
-            <p>Ainda não existem eventos nesta obra.</p>
+            <p><?= e(t('projects.show.no_history')) ?></p>
         </div>
     <?php else: ?>
         <ol class="event-list">
@@ -229,25 +251,21 @@ foreach ($eventsByChange as $events) {
 <?php if ($isManager): ?>
     <section class="card danger-zone">
         <div>
-            <h2 class="section-title"><?= $isArchived ? 'Reativar obra' : 'Arquivar obra' ?></h2>
+            <h2 class="section-title"><?= e($isArchived ? t('projects.show.reactivate_title') : t('projects.show.archive_title')) ?></h2>
             <p class="text-muted">
-                <?php if ($isArchived): ?>
-                    A obra está arquivada. Reativar volta a colocá-la no estado «Planeada», com todo o histórico.
-                <?php else: ?>
-                    Arquivar mantém os dados e o histórico, mas impede novas alterações. Só é possível sem alterações pendentes.
-                <?php endif; ?>
+                <?= e($isArchived ? t('projects.show.reactivate_text') : t('projects.show.archive_text')) ?>
             </p>
         </div>
         <?php if ($isArchived): ?>
             <form method="post" action="<?= e(url('/obras/' . $project['id'] . '/reativar')) ?>">
                 <?= csrf_field() ?>
-                <button type="submit" class="btn btn--primary">Reativar obra</button>
+                <button type="submit" class="btn btn--primary"><?= e(t('projects.show.reactivate')) ?></button>
             </form>
         <?php else: ?>
             <form method="post" action="<?= e(url('/obras/' . $project['id'] . '/arquivar')) ?>"
-                  data-confirm="Arquivar esta obra? Deixa de aceitar novas alterações até ser reativada.">
+                  data-confirm="<?= e(t('projects.show.archive_confirm')) ?>">
                 <?= csrf_field() ?>
-                <button type="submit" class="btn btn--danger-ghost"><?= icon('archive') ?> Arquivar obra</button>
+                <button type="submit" class="btn btn--danger-ghost"><?= icon('archive') ?> <?= e(t('projects.show.archive')) ?></button>
             </form>
         <?php endif; ?>
     </section>

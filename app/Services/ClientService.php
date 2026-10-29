@@ -25,27 +25,27 @@ final class ClientService
         $notes = trim((string) ($input['notes'] ?? ''));
 
         if ($name === '') {
-            $errors['name'] = 'Indica o nome do cliente.';
+            $errors['name'] = t('validation.client_name');
         } elseif (mb_strlen($name) < 2) {
-            $errors['name'] = 'O nome deve ter pelo menos 2 caracteres.';
+            $errors['name'] = t('validation.client_name_short');
         } elseif (mb_strlen($name) > 120) {
-            $errors['name'] = 'O nome não pode exceder 120 caracteres.';
+            $errors['name'] = t('validation.client_name_long');
         }
 
         if ($contact !== '' && mb_strlen($contact) > 60) {
-            $errors['contact'] = 'O contacto não pode exceder 60 caracteres.';
+            $errors['contact'] = t('validation.contact_long');
         }
 
         if ($email !== '') {
             if (mb_strlen($email) > 150) {
-                $errors['email'] = 'O email não pode exceder 150 caracteres.';
+                $errors['email'] = t('validation.email_long');
             } elseif (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-                $errors['email'] = 'Indica um email válido (ex.: nome@exemplo.pt).';
+                $errors['email'] = t('validation.email_invalid');
             }
         }
 
         if (mb_strlen($notes) > 1500) {
-            $errors['notes'] = 'As notas não podem exceder 1500 caracteres.';
+            $errors['notes'] = t('validation.notes_long');
         }
 
         if ($errors !== []) {
@@ -72,7 +72,7 @@ final class ClientService
             return ClientRepository::create($data);
         }
 
-        ClientRepository::find($id) ?? throw new NotFoundException('O cliente indicado não existe.');
+        ClientRepository::find($id) ?? throw new NotFoundException(t('validation.client_not_found'));
         ClientRepository::update($id, $data);
 
         return $id;
@@ -80,19 +80,16 @@ final class ClientService
 
     public static function archive(int $id): void
     {
-        $client = ClientRepository::find($id) ?? throw new NotFoundException('O cliente indicado não existe.');
+        $client = ClientRepository::find($id) ?? throw new NotFoundException(t('validation.client_not_found'));
 
         if ((int) $client['active'] === 0) {
-            throw new BusinessRuleException('Este cliente já está arquivado.');
+            throw new BusinessRuleException(t('validation.client_already_archived'));
         }
 
         $activeProjects = ClientRepository::activeProjectCount($id);
 
         if ($activeProjects > 0) {
-            throw new BusinessRuleException(
-                'Não é possível arquivar: o cliente tem ' . $activeProjects
-                . ' obra(s) ativa(s). Arquiva ou conclui primeiro essas obras.'
-            );
+            throw new BusinessRuleException(t('validation.client_has_projects', ['count' => $activeProjects]));
         }
 
         ClientRepository::setActive($id, false);
@@ -100,10 +97,10 @@ final class ClientService
 
     public static function reactivate(int $id): void
     {
-        $client = ClientRepository::find($id) ?? throw new NotFoundException('O cliente indicado não existe.');
+        $client = ClientRepository::find($id) ?? throw new NotFoundException(t('validation.client_not_found'));
 
         if ((int) $client['active'] === 1) {
-            throw new BusinessRuleException('Este cliente já está ativo.');
+            throw new BusinessRuleException(t('validation.client_already_active'));
         }
 
         ClientRepository::setActive($id, true);

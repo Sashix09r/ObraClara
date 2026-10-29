@@ -24,7 +24,7 @@ final class ClientController extends Controller
         $includeArchived = ($_GET['arquivados'] ?? '') === '1';
 
         View::page('clients/index', [
-            'title'           => 'Clientes',
+            'title'           => t('clients.title'),
             'nav'             => 'clients',
             'user'            => $user,
             'clients'         => ClientRepository::search($query, $includeArchived),
@@ -39,7 +39,7 @@ final class ClientController extends Controller
         $user = Auth::requireManager();
 
         View::page('clients/form', [
-            'title'      => 'Novo cliente',
+            'title'      => t('clients.new_title'),
             'nav'        => 'clients',
             'user'       => $user,
             'mode'       => 'create',
@@ -64,12 +64,12 @@ final class ClientController extends Controller
                 'email'   => post_string('email'),
                 'notes'   => post_string('notes'),
                 'active'  => 1,
-            ], $exception->errors(), '/clientes/criar', 'Novo cliente', $user);
+            ], $exception->errors(), '/clientes/criar', t('clients.new_title'), $user);
 
             return;
         }
 
-        Flash::success('Cliente criado com sucesso.');
+        Flash::success(t('flash.client_created'));
         $this->redirect('/clientes/' . $id);
     }
 
@@ -81,7 +81,7 @@ final class ClientController extends Controller
         $client = ClientRepository::find($id);
 
         if ($client === null) {
-            throw new NotFoundException('O cliente indicado não existe.');
+            throw new NotFoundException(t('validation.client_not_found'));
         }
 
         View::page('clients/show', [
@@ -101,10 +101,10 @@ final class ClientController extends Controller
         $client = ClientRepository::find($id);
 
         if ($client === null) {
-            throw new NotFoundException('O cliente indicado não existe.');
+            throw new NotFoundException(t('validation.client_not_found'));
         }
 
-        $this->renderForm(200, 'edit', $client, [], '/clientes/' . $id . '/editar', 'Editar cliente', $user);
+        $this->renderForm(200, 'edit', $client, [], '/clientes/' . $id . '/editar', t('clients.edit_title'), $user);
     }
 
     /** @param array<string, string> $params */
@@ -123,12 +123,12 @@ final class ClientController extends Controller
                 'email'   => post_string('email'),
                 'notes'   => post_string('notes'),
                 'active'  => 1,
-            ], $exception->errors(), '/clientes/' . $id . '/editar', 'Editar cliente', $user);
+            ], $exception->errors(), '/clientes/' . $id . '/editar', t('clients.edit_title'), $user);
 
             return;
         }
 
-        Flash::success('Cliente atualizado.');
+        Flash::success(t('flash.client_updated'));
         $this->redirect('/clientes/' . $id);
     }
 
@@ -140,7 +140,7 @@ final class ClientController extends Controller
 
         try {
             ClientService::archive($id);
-            Flash::success('Cliente arquivado. O histórico foi preservado.');
+            Flash::success(t('flash.client_archived'));
         } catch (BusinessRuleException $exception) {
             Flash::error($exception->getMessage());
         }
@@ -156,7 +156,7 @@ final class ClientController extends Controller
 
         try {
             ClientService::reactivate($id);
-            Flash::success('Cliente reativado.');
+            Flash::success(t('flash.client_reactivated'));
         } catch (BusinessRuleException $exception) {
             Flash::error($exception->getMessage());
         }

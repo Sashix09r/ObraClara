@@ -6,13 +6,23 @@ declare(strict_types=1);
  * @var array<string, string> $errors
  * @var string|null $error
  * @var string $email
+ * @var bool $signedOut
  */
 $errors = $errors ?? [];
 $error = $error ?? null;
 $email = $email ?? '';
+$signedOut = $signedOut ?? false;
+$languageQuery = $_GET;
+unset($languageQuery['signed_out']);
+
+$languageUrl = static function (string $locale) use ($languageQuery): string {
+    $languageQuery['lang'] = $locale;
+
+    return url('/login') . '?' . http_build_query($languageQuery);
+};
 ?>
 <div class="auth-shell">
-    <section class="auth-brand" aria-label="Sobre a aplicação">
+    <section class="auth-brand" aria-label="<?= e(t('app.name')) ?>">
         <div class="auth-brand__top">
             <span class="brand__mark brand__mark--light" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round">
@@ -24,30 +34,44 @@ $email = $email ?? '';
         </div>
 
         <div class="auth-brand__body">
-            <p class="eyebrow">Remodelações · Gestão de obra</p>
-            <h1>Decisões sobre custos extra, todas no mesmo lugar.</h1>
-            <p>
-                Registe trabalhos adicionais, submeta propostas e mantenha o orçamento
-                da obra sempre atualizado — com o histórico de quem decidiu o quê.
-            </p>
+            <p class="eyebrow"><?= e(t('auth.kicker')) ?></p>
+            <h1><?= e(t('auth.headline')) ?></h1>
+            <p><?= e(t('auth.intro')) ?></p>
 
             <ul class="auth-points">
-                <li><span aria-hidden="true">✓</span> Orçamento atualizado apenas com alterações aprovadas</li>
-                <li><span aria-hidden="true">✓</span> Perfis distintos para gestor e colaborador</li>
-                <li><span aria-hidden="true">✓</span> Histórico imutável de submissões e decisões</li>
+                <li><span aria-hidden="true">✓</span> <?= e(t('auth.point_budget')) ?></li>
+                <li><span aria-hidden="true">✓</span> <?= e(t('auth.point_roles')) ?></li>
+                <li><span aria-hidden="true">✓</span> <?= e(t('auth.point_history')) ?></li>
             </ul>
         </div>
 
-        <p class="auth-brand__footer">Projeto académico — Programação Web, 12.º F</p>
+        <p class="auth-brand__footer"><?= e(t('auth.footer')) ?></p>
     </section>
 
     <section class="auth-panel" id="conteudo">
+        <div class="auth-panel__top">
+            <nav class="lang-switch lang-switch--auth" aria-label="<?= e(t('layout.language')) ?>">
+                <a class="<?= current_locale() === 'pt' ? 'is-active' : '' ?>" href="<?= e($languageUrl('pt')) ?>"
+                   hreflang="pt" lang="pt">PT</a>
+                <span aria-hidden="true">|</span>
+                <a class="<?= current_locale() === 'en' ? 'is-active' : '' ?>" href="<?= e($languageUrl('en')) ?>"
+                   hreflang="en" lang="en">EN</a>
+            </nav>
+        </div>
+
         <div class="auth-card">
             <header class="auth-card__header">
-                <p class="eyebrow">Área reservada</p>
-                <h2>Entrar na conta</h2>
-                <p class="text-muted">Usa as credenciais fornecidas pela empresa.</p>
+                <p class="eyebrow"><?= e(t('auth.reserved')) ?></p>
+                <h2><?= e(t('auth.login_title')) ?></h2>
+                <p class="text-muted"><?= e(t('auth.login_help')) ?></p>
             </header>
+
+            <?php if ($signedOut): ?>
+                <div class="alert alert--success" role="status">
+                    <span class="alert__icon" aria-hidden="true"><?= icon('check') ?></span>
+                    <p><?= e(t('auth.signed_out')) ?></p>
+                </div>
+            <?php endif; ?>
 
             <?php if ($error !== null): ?>
                 <div class="alert alert--error" role="alert">
@@ -60,7 +84,7 @@ $email = $email ?? '';
                 <?= csrf_field() ?>
 
                 <div class="field">
-                    <label for="email">Email</label>
+                    <label for="email"><?= e(t('common.email')) ?></label>
                     <input type="email" id="email" name="email" value="<?= e($email) ?>"
                            autocomplete="username" required autofocus
                            class="<?= field_class($errors, 'email') ?>"
@@ -71,40 +95,52 @@ $email = $email ?? '';
                 </div>
 
                 <div class="field">
-                    <label for="password">Palavra-passe</label>
-                    <input type="password" id="password" name="password" required
-                           autocomplete="current-password"
-                           class="<?= field_class($errors, 'password') ?>"
-                           <?= isset($errors['password']) ? 'aria-invalid="true" aria-describedby="password-error"' : '' ?>>
+                    <label for="password"><?= e(t('common.password')) ?></label>
+                    <div class="password-field">
+                        <input type="password" id="password" name="password" required
+                               autocomplete="current-password"
+                               class="<?= field_class($errors, 'password') ?>"
+                               <?= isset($errors['password']) ? 'aria-invalid="true" aria-describedby="password-error"' : '' ?>>
+                        <button type="button" class="password-toggle" data-password-toggle
+                                aria-controls="password" aria-pressed="false"
+                                data-label-show="<?= e(t('common.show_password')) ?>"
+                                data-label-hide="<?= e(t('common.hide_password')) ?>"
+                                aria-label="<?= e(t('common.show_password')) ?>"><?= icon('eye') ?></button>
+                    </div>
                     <?php if (isset($errors['password'])): ?>
                         <p class="field__error" id="password-error"><?= e($errors['password']) ?></p>
                     <?php endif; ?>
                 </div>
 
                 <button type="submit" class="btn btn--primary btn--block">
-                    Entrar
+                    <?= e(t('auth.login_button')) ?>
                     <?= icon('arrow') ?>
                 </button>
             </form>
 
-            <aside class="demo-box">
-                <h3>Contas de demonstração</h3>
-                <p>Dados fictícios, apenas para esta instalação local.</p>
-                <dl>
-                    <div>
-                        <dt>Gestor</dt>
-                        <dd>gestor@obraclara.pt · <code>Gestor2026!</code></dd>
-                    </div>
-                    <div>
-                        <dt>Colaborador</dt>
-                        <dd>colaborador@obraclara.pt · <code>Colab2026!</code></dd>
-                    </div>
-                </dl>
-            </aside>
+            <div class="auth-separator" role="presentation"><span><?= e(t('auth.invite_only')) ?></span></div>
+            <a class="btn btn--ghost btn--block" href="<?= e(url('/registar')) ?>">
+                <?= icon('user') ?> <?= e(t('auth.create_account')) ?>
+            </a>
+
+            <?php if ((bool) config('demo_mode', false)): ?>
+                <aside class="demo-box">
+                    <h3><?= e(t('auth.demo_title')) ?> <span class="badge badge--draft"><?= e(t('auth.demo_badge')) ?></span></h3>
+                    <p><?= e(t('auth.demo_note')) ?></p>
+                    <dl>
+                        <div>
+                            <dt><?= e(t('common.manager')) ?></dt>
+                            <dd>gestor@obraclara.pt · <code>Gestor2026!</code></dd>
+                        </div>
+                        <div>
+                            <dt><?= e(t('common.staff')) ?></dt>
+                            <dd>colaborador@obraclara.pt · <code>Colab2026!</code></dd>
+                        </div>
+                    </dl>
+                </aside>
+            <?php endif; ?>
         </div>
 
-        <p class="auth-panel__note">
-            Aplicação local — não introduzas dados reais de clientes.
-        </p>
+        <p class="auth-panel__note"><?= e(t('auth.local_note')) ?></p>
     </section>
 </div>

@@ -26,12 +26,12 @@ final class ChangeController extends Controller
         $project = ProjectRepository::find($projectId);
 
         if ($project['status'] === 'arquivada') {
-            Flash::error('A obra está arquivada. Reativa-a antes de criar alterações.');
+            Flash::error(t('flash.change_archived'));
             $this->redirect('/obras/' . $projectId);
         }
 
         View::page('changes/form', [
-            'title'      => 'Nova alteração',
+            'title'      => t('changes.new_title'),
             'nav'        => 'projects',
             'user'       => $user,
             'mode'       => 'create',
@@ -54,7 +54,7 @@ final class ChangeController extends Controller
             $changeId = ChangeService::create($projectId, $_POST, $user, $submit);
         } catch (ValidationException $exception) {
             View::page('changes/form', [
-                'title'      => 'Nova alteração',
+                'title'      => t('changes.new_title'),
                 'nav'        => 'projects',
                 'user'       => $user,
                 'mode'       => 'create',
@@ -75,11 +75,7 @@ final class ChangeController extends Controller
             $this->redirect('/obras/' . $projectId);
         }
 
-        Flash::success(
-            $submit
-                ? 'Alteração submetida para decisão do gestor.'
-                : 'Rascunho guardado. Podes submetê-lo quando estiver pronto.'
-        );
+        Flash::success($submit ? t('flash.change_submitted') : t('flash.change_created'));
         // Voltar ao topo da obra: a mensagem e o orçamento têm de ficar visíveis.
         $this->redirect('/obras/' . $projectId);
     }
@@ -98,7 +94,7 @@ final class ChangeController extends Controller
         }
 
         View::page('changes/form', [
-            'title'      => 'Editar rascunho',
+            'title'      => t('changes.edit_title'),
             'nav'        => 'projects',
             'user'       => $user,
             'mode'       => 'edit',
@@ -125,7 +121,7 @@ final class ChangeController extends Controller
             ChangeService::update((int) $change['id'], $_POST, $user, $submit);
         } catch (ValidationException $exception) {
             View::page('changes/form', [
-                'title'      => 'Editar rascunho',
+                'title'      => t('changes.edit_title'),
                 'nav'        => 'projects',
                 'user'       => $user,
                 'mode'       => 'edit',
@@ -146,7 +142,7 @@ final class ChangeController extends Controller
             $this->redirect('/obras/' . (int) $change['project_id']);
         }
 
-        Flash::success($submit ? 'Alteração atualizada e submetida para decisão.' : 'Rascunho atualizado.');
+        Flash::success($submit ? t('flash.change_updated_submitted') : t('flash.change_updated'));
         $this->redirect('/obras/' . (int) $change['project_id']);
     }
 
@@ -158,7 +154,7 @@ final class ChangeController extends Controller
 
         try {
             ChangeService::submit((int) $change['id'], $user);
-            Flash::success('Alteração submetida. O gestor vai agora analisá-la.');
+            Flash::success(t('flash.change_submit_success'));
         } catch (BusinessRuleException | AuthorizationException $exception) {
             Flash::error($exception->getMessage());
         }
@@ -174,12 +170,12 @@ final class ChangeController extends Controller
         $project = ProjectRepository::find((int) $change['project_id']);
 
         if ($change['status'] !== 'pendente') {
-            Flash::error('Esta alteração já não está pendente: não pode ser decidida de novo.');
+            Flash::error(t('flash.change_not_pending'));
             $this->redirect('/obras/' . (int) $project['id']);
         }
 
         View::page('changes/decide', [
-            'title'   => 'Decidir alteração',
+            'title'   => t('changes.decide.title'),
             'nav'     => 'projects',
             'user'    => $user,
             'change'  => $change,
@@ -205,7 +201,7 @@ final class ChangeController extends Controller
             $newStatus = ChangeService::decide((int) $change['id'], $user, $decision, $note);
         } catch (ValidationException $exception) {
             View::page('changes/decide', [
-                'title'    => 'Decidir alteração',
+                'title'    => t('changes.decide.title'),
                 'nav'      => 'projects',
                 'user'     => $user,
                 'change'   => $change,
@@ -222,11 +218,7 @@ final class ChangeController extends Controller
             $this->redirect('/obras/' . (int) $project['id']);
         }
 
-        Flash::success(
-            $newStatus === 'aprovada'
-                ? 'Alteração aprovada. O orçamento atualizado da obra foi recalculado.'
-                : 'Alteração rejeitada. O orçamento da obra não foi alterado.'
-        );
+        Flash::success($newStatus === 'aprovada' ? t('flash.change_approved') : t('flash.change_rejected'));
         // Sem âncora: o gestor tem de ver logo o novo orçamento e a confirmação.
         $this->redirect('/obras/' . (int) $project['id']);
     }

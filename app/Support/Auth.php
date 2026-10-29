@@ -54,6 +54,8 @@ final class Auth
 
         session_regenerate_id(true);
         $_SESSION['user_id'] = (int) $user['id'];
+        Lang::setLocale((string) ($user['locale'] ?? 'pt'));
+        UserRepository::markLogin((int) $user['id']);
         Csrf::rotate();
 
         return true;
@@ -76,6 +78,9 @@ final class Auth
         $user = UserRepository::find((int) $id);
 
         if ($user === null || (int) $user['active'] !== 1) {
+            // Uma conta desativada perde imediatamente a sessão autenticada.
+            unset($_SESSION['user_id']);
+
             return null;
         }
 
@@ -88,7 +93,7 @@ final class Auth
         $user = self::user();
 
         if ($user === null) {
-            Flash::error('A sua sessão expirou. Volte a entrar.');
+            Flash::error(t('flash.login_required'));
             header('Location: ' . url('/login'));
             exit;
         }
@@ -104,12 +109,12 @@ final class Auth
     }
 
     /** @return array<string, mixed> */
-    public static function requireManager(): array
+    public static function requireManager(?string $message = null): array
     {
         $user = self::requireUser();
 
         if (!self::isManager($user)) {
-            throw new AuthorizationException('Apenas o gestor pode aprovar ou rejeitar alterações.');
+            throw new AuthorizationException($message ?? t('validation.manager_only'));
         }
 
         return $user;

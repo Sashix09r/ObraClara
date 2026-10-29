@@ -1,96 +1,114 @@
 # ESTADO E RETOMA — ObraClara V2
 
-**Atualizado:** 29/10/2026 (sessão da tarde, após ensaio e geração do pacote PDF/PPTX)
+**Atualizado:** 29/10/2026, sessão de finalização
 **Branch:** `ai/obraclara-v2`
-**Último commit de implementação:** `8f79754` — “fix: corrigir apresentação após ensaio cronometrado”
-**Pacote de entrega:** commit `83f556e` — PDFs, PPTX e ZIP do Moodle
-**URL da branch:** <https://github.com/Sashix09r/ObraClara/tree/ai/obraclara-v2>
-**`main`:** não foi alterada; não houve merge, force-push nem reset destrutivo.
+**Repositório:** <https://github.com/Sashix09r/ObraClara/tree/ai/obraclara-v2>
+**`main`:** não alterada; sem merge, force-push ou reset destrutivo.
+**Último commit:** preenchido no fecho desta sessão (ver `git log`).
 
 ---
 
 ## 1. Estado funcional
 
-A aplicação está **funcional e testada localmente**.
+A aplicação está **funcional, bilingue e testada localmente**.
 
 | Área | Estado |
 |---|---|
-| Base de dados SQLite + seed | Concluída |
-| Autenticação, sessões e perfis | Concluída |
+| Base de dados SQLite + migrações + seed | Concluída |
+| Autenticação, sessões, perfis e bloqueio de tentativas | Concluída |
+| Convites, registo e gestão de equipa | Concluída e testada |
+| Perfil, dados e alteração de palavra-passe | Concluída e testada |
 | Clientes (CRUD, pesquisa, arquivo) | Concluída |
 | Obras (CRUD, filtros, arquivo, orçamento) | Concluída |
 | Alterações (rascunho → pendente → decisão) | Concluída |
 | Orçamento apenas com aprovadas | Concluída e testada |
 | Histórico imutável | Concluída (serviço + triggers) |
 | Dashboard com SQL real | Concluída |
-| Interface responsiva e estados de feedback | Concluída |
-| Testes automatizados | 25/25 passaram, exit 0 |
-| Testes HTTP | Executados e documentados |
-| Apache/Laragon com Virtual Host | Validado a 29/10/2026: 15/15 verificações |
-| Capturas reais | 11 imagens em `docs/capturas/` (05 e 07 refeitas após o ensaio) |
-| Ensaio da demonstração | Concluído: guião percorrido, 2 falhas visuais corrigidas |
-| README, manual, relatório, modelo, roteiro | Concluídos |
-| Pacote PDF/PPTX para o Moodle | Concluído: relatório 15 pp., manual 16 pp., apresentação 10 slides |
-| Registo de IA | Atualizado; esclarecimento preparado, aguarda envio/resposta |
+| Exportação PDF real (PT/EN) | Concluída e testada |
+| Tutorial interativo contextual | Concluído e testado |
+| Interface PT/EN | Concluída e testada |
+| Interface responsiva 320–1440 px | Validada por medição |
+| Testes automatizados | **38/38**, saída 0 |
+| Verificações HTTP | **37/37** |
+| Verificações de browser | **33/33** |
+| Apache/Laragon | Rotas, PDF, CSS e cabeçalhos validados |
+| Capturas reais | **17** em `docs/capturas/` |
+| Relatório e manual | PDFs regenerados (19 e 23 páginas) |
+| Pacote Moodle | Regenerado com PDFs e README |
+| Apresentação | A antiga foi preservada sem alterações; a final será feita no Canva |
 
-**Servidor de demonstração:** `http://localhost:8000` (PHP built-in server em execução).
-Se tiver sido encerrado, arrancar com:
+**Servidor de demonstração:** `http://localhost:8000`.
+Se tiver sido encerrado:
 
 ```bash
 php -S localhost:8000 -t public public/router.php
 ```
 
-**Estado atual dos dados:** demonstração reposta com `php scripts/seed.php --reset` —
-obra principal com **8 000,00 €** e alteração de **650,00 € pendente**, pronta para a
-demonstração. A base está em `database/obraclara.sqlite` (ignorada pelo Git).
+**Estado da demo:** reposta com `php scripts/seed.php --reset` — obra principal com
+**8 000,00 €** e alteração de **650,00 € pendente**.
 
 ---
 
 ## 2. Testes e evidências
 
 ```bash
-php tests/run.php     # 25/25, código de saída 0
+php tests/run.php     # 38/38, saída 0
 ```
 
 - Resultados completos: [`RESULTADOS_TESTES.md`](RESULTADOS_TESTES.md).
-- Cenário 8 000 + 650 = 8 650 verificado em teste e por HTTP.
-- Permissões: colaborador recebe 403 ao decidir; CSRF inválido recebe 419.
-- Imutabilidade: trigger recusa alteração de decididas e edição/apagamento de eventos.
-- Testes usam bases descartáveis em `tmp/`; os dados de demonstração não foram usados
-  em testes destrutivos. Para a captura de 8 650 € a demo foi aprovada e logo reposta.
-- Ensaio no navegador (T26–T30): criação/submissão, 403 do colaborador, aprovação,
-  rejeição, teclado e ecrã estreito. Detalhe em `RESULTADOS_TESTES.md` e
-  `ENSAIO_DEMONSTRACAO.md`.
-- Percurso do guião por HTTP numa base descartável: **14 pedidos, 384 ms**, final 8 650 €.
+- HTTP: **37/37** verificações numa base descartável (convite, registo, perfil,
+  palavra-passe, idioma, PDF, aprovação, CSRF, 403, 419, 422 e conta desativada),
+  repetidas em 29/10/2026 contra `tmp/http-final-obraclara.sqlite`.
+- Browser: **33/33** verificações com Chrome/Playwright, incluindo tutorial, tradução,
+  PDF e mobile a 390 px, repetidas em 29/10/2026 sobre uma cópia da demo.
+- PDFs de obra: 1 página, válidos e pesquisáveis; 4 687 bytes antes da aprovação (EN) e
+  5 079 bytes depois (PT), com valores e observação.
+- Documentos finais: relatório com 19 páginas e manual com 23, ambos A4, sem páginas em
+  branco, com 8 e 17 imagens respetivamente; ZIP com 4 ficheiros e `testzip()` limpo.
+- `php -l` em **67 ficheiros** PHP, sem erros.
+- Os testes usam bases descartáveis em `tmp/`; a demo não é usada para escritas. Foi criada
+  uma cópia adicional em `database/backups/` antes da reverificação.
 
 ---
 
-## 3. Ficheiros principais
+## 3. Documentos finais
+
+- [`../entregas/ObraClara_V2_Relatorio.pdf`](../entregas/ObraClara_V2_Relatorio.pdf) — 19 páginas.
+- [`../entregas/ObraClara_V2_Manual.pdf`](../entregas/ObraClara_V2_Manual.pdf) — 23 páginas.
+- [`../entregas/ObraClara_V2_Entrega_Moodle.zip`](../entregas/ObraClara_V2_Entrega_Moodle.zip) — pacote final.
+- [`../entregas/README.md`](../entregas/README.md) — lista e verificações.
+- [`../entregas/SHA256SUMS.txt`](../entregas/SHA256SUMS.txt) — integridade.
+
+A apresentação PowerPoint antiga **não foi alterada** e não faz parte do ZIP final; a
+versão a apresentar será preparada no Canva. O roteiro atualizado está em
+[`APRESENTACAO_ROTEIRO.md`](APRESENTACAO_ROTEIRO.md).
+
+---
+
+## 4. Ficheiros principais
 
 - `public/index.php`, `public/router.php`, `public/assets/`
-- `app/Http/Controllers/`, `app/Http/Router.php`
-- `app/Services/` (regras e transações)
+- `app/Http/Controllers/` (Auth, Team, Profile, Client, Project, Change, History)
+- `app/Services/` (regras, convites, conta, PDF)
 - `app/Repositories/` (PDO preparado)
-- `app/Support/` (Auth, Csrf, Session, Money, View, exceções)
-- `app/views/` (layout e páginas)
+- `app/Support/` (Auth, Csrf, Session, Money, Lang, Migrator, Pdf, View)
+- `app/views/` (layout, auth, team, profile, clientes, obras, alterações, histórico)
+- `lang/pt.php`, `lang/en.php`
 - `database/schema.sql`, `scripts/install.php`, `scripts/seed.php`, `tests/run.php`
-- `docs/MANUAL_UTILIZACAO.md`, `RELATORIO_PROJETO.md`, `10_MODELO_RELACIONAL.md`,
-  `APRESENTACAO_ROTEIRO.md`, `RESULTADOS_TESTES.md`, `REGISTO_IA.md`,
-  `ESCLARECIMENTO_IA_PROFESSOR.md`
-- `entregas/ObraClara_V2_Relatorio.pdf`, `ObraClara_V2_Manual.pdf`,
-  `ObraClara_V2_Apresentacao.pptx`, `ObraClara_V2_Apresentacao.pdf` e o ZIP do Moodle
+- `docs/RELATORIO_PROJETO.md`, `MANUAL_UTILIZACAO.md`, `10_MODELO_RELACIONAL.md`,
+  `RESULTADOS_TESTES.md`, `REGISTO_IA.md`, `APRESENTACAO_ROTEIRO.md`
 
 ---
 
-## 4. Comandos úteis
+## 5. Comandos úteis
 
 ```bash
-php scripts/install.php
-php scripts/seed.php --reset
-php tests/run.php
+php scripts/install.php          # esquema + migrações (cópia antes de migrar)
+php scripts/seed.php --reset     # repõe a demo (apaga a base local!)
+php tests/run.php                # 38 testes
 php -S localhost:8000 -t public public/router.php
 git status
-git log --oneline -3
+git log --oneline -5
 git push
 ```
 
@@ -99,81 +117,27 @@ Contas fictícias: `gestor@obraclara.pt / Gestor2026!` e
 
 ---
 
-## 5. Bloqueadores e pendentes
+## 6. Bloqueadores e pendentes
 
-**Bloqueadores técnicos:** nenhum. O Git e o push para a branch autorizada funcionaram.
+**Bloqueadores técnicos:** nenhum.
 
-**Pendente humano (único ponto que exige decisão externa):**
+**Pendente humano:**
 
-1. **Enviar ao professor** a mensagem sobre IA paga (protótipo anterior e planeamento com
-   ChatGPT Plus). O texto pronto está em
-   [`ESCLARECIMENTO_IA_PROFESSOR.md`](ESCLARECIMENTO_IA_PROFESSOR.md); registar a resposta
-   na tabela da secção 7 desse guião. Não afirmar conformidade total antes da resposta.
-2. **Passagem cronometrada em voz alta**, feita pelo aluno. O ensaio do agente já validou a
-   mecânica e os tempos (≈4,3 min de fala + 1,5–2 min de interação); falta o ritmo real.
-3. **Abrir `http://172.16.58.199/` no telemóvel** na mesma Wi-Fi e confirmar login, menu ☰,
-   ausência de decisão para o colaborador e leitura em cartões. O agente não tem dispositivo
-   físico; os passos e o resultado esperado estão em `RESULTADOS_TESTES.md`, secção 3.2.
-4. Confirmar na conta Freebuff que a sessão usada foi gratuita (o modelo não era visível).
-5. **Rever e submeter o pacote de `entregas/` no Moodle.** A capa identifica «aluno do
-   12.º F»; se for exigido o nome impresso, acrescentá-lo antes de submeter.
-
-**Melhorias não executadas (não são bloqueadores):**
-
-- Testar Firefox/Safari e leitor de ecrã.
-- Sessão de usabilidade com um colega.
-- Abrir PR de `ai/obraclara-v2` para `main` (sem merge) se o professor o pedir.
+1. **Teste num telemóvel físico.** O agente não tem dispositivo; a emulação de viewport foi
+   executada. Passos em `RESULTADOS_TESTES.md`, secção 5.
+2. **Apresentação final em Canva.** O roteiro está atualizado; os slides antigos não devem
+   ser usados como versão final.
+3. **Nome do aluno na capa**, se exigido, e revisão final antes do Moodle.
+4. **Confirmação da conta Freebuff** quanto ao modelo/custo; o registo não inventa o nome.
+5. **Esclarecimento de IA:** foi comunicado ao professor e, segundo o aluno, considerado
+   aceitável; não há autorização escrita anexada. Manter a declaração transparente.
 
 ---
 
-## 6. Próxima ação autónoma
+## 7. Próxima ação autónoma
 
-Se a sessão for retomada sem instruções novas:
-
-1. Enviar a mensagem de [`ESCLARECIMENTO_IA_PROFESSOR.md`](ESCLARECIMENTO_IA_PROFESSOR.md)
-   e registar a resposta na secção 7; só depois atualizar `REGISTO_IA.md` e o relatório.
-2. Executar `php scripts/seed.php --reset` e `php tests/run.php` para confirmar o estado.
-3. Abrir `http://172.16.58.199/` no telemóvel e registar o resultado (única validação em falta).
-4. Ensaiar em voz alta com cronómetro, seguindo [`APRESENTACAO_ROTEIRO.md`](APRESENTACAO_ROTEIRO.md);
-   o percurso mecânico e as correções já estão validados em `ENSAIO_DEMONSTRACAO.md`.
-5. Verificar no GitHub que a branch `ai/obraclara-v2` contém o commit mais recente.
-6. Abrir `entregas/README.md`, confirmar as contagens e rever os PDFs antes de submeter.
-7. Não alterar `main`, não fazer merge, não usar force-push.
-
----
-
-## 7. Notas de transparência
-
-- O servidor auxiliar de testes (8001) e o proxy temporário de captura (8010) foram
-  encerrados; os ficheiros temporários com sessões foram removidos.
-- O servidor de demonstração em 8000 continua ativo.
-- O Apache 2.4.66 do Laragon está em execução manual na porta 80, com o vhost
-  `C:\laragon\etc\apache2\sites-enabled\obraclara-v2.test.conf` e a entrada
-  `127.0.0.1 obraclara-v2.test` no ficheiro `hosts`. Para parar antes de arrancar o
-  Laragon pela interface: `httpd.exe -k shutdown`.
-- As capturas foram geradas a partir da aplicação real com Chrome headless e uma sessão
-  autenticada; não são maquetas.
-- O histórico completo do trabalho está nos commits `9373333` (início), `2ff1a5f`
-  (aplicação e testes), `df243e2` (segurança, UX e documentação), `8f79754` (correções do
-  ensaio), `a030635` e `e46e7e2` (estado e tempos). O commit da validação Apache é indicado
-  no GitHub após este push.
-
----
-
-## 8. Composição dos documentos de entrega
-
-Os PDFs e o PPTX não foram escritos à mão: foram compostos a partir dos Markdown e das
-11 capturas reais de `docs/capturas/`.
-
-| Passo | Ferramenta | Resultado |
-|---|---|---|
-| Markdown → HTML A4 | Python + `markdown` | Capa, índice, cabeçalhos, tabelas e figuras |
-| HTML → PDF | Playwright + Chromium | PDF A4 com texto pesquisável e ligações internas |
-| Diapositivos | `python-pptx` | 10 slides 16:9 com notas do orador |
-| PPTX → PDF | Microsoft PowerPoint 365 | Cópia fiel da apresentação |
-| Verificação | `pypdf` + inspeção visual | Contagem, páginas em branco, texto e metadados |
-
-Os scripts de composição ficaram em `tmp/` (ignorado pelo Git) e não fazem parte da
-aplicação. Se os Markdown ou as capturas mudarem, os documentos têm de ser recompostos;
-renomear os PDFs antigos não é suficiente. A lista de ficheiros e as verificações estão em
-[`../entregas/README.md`](../entregas/README.md).
+1. Abrir `http://localhost:8000`, entrar como gestor e percorrer o roteiro.
+2. Abrir o ZIP e confirmar os dois PDFs e o README.
+3. Se o professor pedir o nome na capa, acrescentá-lo e regenerar os PDFs.
+4. Fazer a passagem cronometrada em voz alta.
+5. Não alterar a `main`; não fazer merge nem force-push.

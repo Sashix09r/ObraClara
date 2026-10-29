@@ -36,15 +36,15 @@ final class ChangeService
         $amountRaw = trim((string) ($input['amount'] ?? ''));
 
         if ($title === '') {
-            $errors['title'] = 'Indica o que a alteração inclui.';
+            $errors['title'] = t('validation.change_title');
         } elseif (mb_strlen($title) < 3) {
-            $errors['title'] = 'O título deve ter pelo menos 3 caracteres.';
+            $errors['title'] = t('validation.change_title_short');
         } elseif (mb_strlen($title) > 150) {
-            $errors['title'] = 'O título não pode exceder 150 caracteres.';
+            $errors['title'] = t('validation.change_title_long');
         }
 
         if (mb_strlen($description) > 2000) {
-            $errors['description'] = 'A descrição não pode exceder 2000 caracteres.';
+            $errors['description'] = t('validation.description_long');
         }
 
         $amountCents = 0;
@@ -153,7 +153,7 @@ final class ChangeService
         $change = ChangeRepository::find($changeId);
 
         if ($change['status'] !== 'rascunho') {
-            throw new BusinessRuleException('Só um rascunho pode ser submetido para decisão.');
+            throw new BusinessRuleException(t('validation.change_not_draft'));
         }
 
         self::ensureCanEdit($change, $actor);
@@ -183,28 +183,28 @@ final class ChangeService
     public static function decide(int $changeId, array $actor, string $decision, ?string $note = null): string
     {
         if (($actor['role'] ?? '') !== 'gestor') {
-            throw new AuthorizationException('Apenas o gestor pode aprovar ou rejeitar alterações.');
+            throw new AuthorizationException(t('validation.manager_only'));
         }
 
         $decision = trim($decision);
         $note = $note === null ? null : trim($note);
 
         if (!in_array($decision, ['aprovar', 'rejeitar'], true)) {
-            throw new ValidationException(['decision' => 'Escolhe aprovar ou rejeitar.']);
+            throw new ValidationException(['decision' => t('validation.decision_choose')]);
         }
 
         if ($note !== null && mb_strlen($note) > 800) {
-            throw new ValidationException(['note' => 'A observação não pode exceder 800 caracteres.']);
+            throw new ValidationException(['note' => t('validation.note_long')]);
         }
 
         if ($decision === 'rejeitar' && ($note === null || mb_strlen($note) < 3)) {
-            throw new ValidationException(['note' => 'Indica o motivo da rejeição (mínimo 3 caracteres).']);
+            throw new ValidationException(['note' => t('validation.reject_note')]);
         }
 
         $change = ChangeRepository::find($changeId);
 
         if ($change['status'] !== 'pendente') {
-            throw new BusinessRuleException('Só alterações pendentes podem ser decididas. Esta já tem uma decisão final.');
+            throw new BusinessRuleException(t('validation.change_not_pending'));
         }
 
         $project = ProjectRepository::find((int) $change['project_id']);
@@ -238,16 +238,14 @@ final class ChangeService
     public static function ensureCanEdit(array $change, array $actor): void
     {
         if ($change['status'] !== 'rascunho') {
-            throw new BusinessRuleException(
-                'Apenas rascunhos podem ser editados. Alterações pendentes ou decididas são imutáveis.'
-            );
+            throw new BusinessRuleException(t('flash.change_edit_denied'));
         }
 
         $isAuthor = (int) $change['created_by'] === (int) ($actor['id'] ?? 0);
         $isManager = ($actor['role'] ?? '') === 'gestor';
 
         if (!$isAuthor && !$isManager) {
-            throw new AuthorizationException('Só o autor do rascunho ou o gestor podem editá-lo.');
+            throw new AuthorizationException(t('validation.not_author'));
         }
     }
 
@@ -255,7 +253,7 @@ final class ChangeService
     private static function ensureProjectEditable(array $project): void
     {
         if ($project['status'] === 'arquivada') {
-            throw new BusinessRuleException('A obra está arquivada. Reativa-a antes de alterar os custos.');
+            throw new BusinessRuleException(t('validation.project_archived'));
         }
     }
 

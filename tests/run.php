@@ -11,15 +11,22 @@ declare(strict_types=1);
  * pelo que os dados de demonstração nunca são tocados.
  */
 
+use ObraClara\Repositories\AdminEventRepository;
 use ObraClara\Repositories\ClientRepository;
 use ObraClara\Repositories\ChangeRepository;
 use ObraClara\Repositories\EventRepository;
+use ObraClara\Repositories\InviteRepository;
 use ObraClara\Repositories\ProjectRepository;
 use ObraClara\Repositories\UserRepository;
+use ObraClara\Services\AccountService;
 use ObraClara\Services\ChangeService;
 use ObraClara\Services\ClientService;
 use ObraClara\Services\DashboardService;
+use ObraClara\Services\ProjectPdfService;
 use ObraClara\Services\ProjectService;
+use ObraClara\Services\TeamService;
+use ObraClara\Support\Lang;
+use ObraClara\Support\Migrator;
 use ObraClara\Support\AuthorizationException;
 use ObraClara\Support\BusinessRuleException;
 use ObraClara\Support\Csrf;
@@ -648,6 +655,359 @@ test('T25', 'Acentuação portuguesa preservada na base de dados e no HTML', fun
         'status' => 'planeada',
     ], (int) $f['gestor']['id']);
     assert_same('Remodelação de sótão e cave', ProjectRepository::find($projectId)['title']);
+});
+
+/* --------------------------------------------------------------------------
+ * T26–T37 — Contas, convites, perfil, PDF, traduções, tutorial e migrações
+ * -------------------------------------------------------------------------- */
+
+/** Cria um convite e devolve o token em claro, apenas para o teste. */
+function invite_token(array $actor, string $email, string $role = 'colaborador'): array
+{
+    return TeamService::createInvite($actor, [
+        'email' => $email,
+        'role' => $role,
+        'expiry' => 7,
+    ]);
+}
+
+test('T26', 'Convite guarda apenas hash e só pode ser usado uma vez', function (): void {
+    $f = fresh_database();
+    $invite = invite_token($f['gestor'], 'Nova.Pessoa@Exemplo.pt');
+
+    assert_same(64, strlen($invite['token']), 'token com 256 bits em hexadecimal');
+    $row = InviteRepository::find($invite['id']);
+    assert_true($row !== null, 'convite guardado');
+    assert_same(hash('sha256', $invite['token']), $row['token_hash'], 'hash SHA-256');
+    assert_true(!str_contains(json_encode($row), $invite['token']), 'token em claro não está na BD');
+    assert_same('nova.pessoa@exemplo.pt', $row['email'], 'email normalizado');
+
+    $newUser = TeamService::register([
+        'token' => $invite['token'],
+        'email' => 'nova.pessoa@exemplo.pt',
+        'name' => 'Nova Pessoa',
+        'password' => 'Nova2026!',
+        'password_confirm' => 'Nova2026!',
+    ]);
+
+    assert_same('colaborador', $newUser['role'], 'perfil vem do convite');
+    assert_true(password_verify('Nova2026!', (string) $newUser['password_hash']), 'password com hash');
+    $used = InviteRepository::find($invite['id']);
+    assert_same((int) $newUser['id'], (int) $used['used_by'], 'convite associado ao novo utilizador');
+    assert_true($used['used_at'] !== null, 'convite marcado como utilizado');
+
+    assert_throws(ValidationException::class, fn () => TeamService::register([
+        'token' => $invite['token'],
+        'email' => 'outra@exemplo.pt',
+        'name' => 'Outra Pessoa',
+        'password' => 'Outra2026!',
+        'password_confirm' => 'Outra2026!',
+    ]), 'segunda utilização recusada');
+
+    $audit = json_encode(AdminEventRepository::forTarget('invite', $invite['id']));
+    assert_true(!str_contains((string) $audit, $invite['token']), 'auditoria não guarda o token');
+});
+
+test('T27', 'Convite inválido não cria conta', function (): void {
+    fresh_database();
+    assert_throws(ValidationException::class, fn () => TeamService::register([
+        'token' => str_repeat('a', 64),
+        'email' => 'x@exemplo.pt',
+        'name' => 'Pessoa X',
+        'password' => 'Pessoa2026!',
+        'password_confirm' => 'Pessoa2026!',
+    ]), 'token inexistente');
+    assert_same(null, UserRepository::findByEmail('x@exemplo.pt'), 'nada criado');
+});
+
+test('T27b', 'Convite revogado e expirado não criam conta', function (): void {
+    $f = fresh_database();
+
+    $revoked = invite_token($f['gestor'], 'revogado@exemplo.pt');
+    TeamService::revokeInvite($f['gestor'], $revoked['id']);
+    assert_throws(ValidationException::class, fn () => TeamService::register([
+        'token' => $revoked['token'], 'email' => 'revogado@exemplo.pt', 'name' => 'Revogado',
+        'password' => 'Revogado2026!', 'password_confirm' => 'Revogado2026!',
+    ]), 'convite revogado');
+
+    $expired = invite_token($f['gestor'], 'expirado@exemplo.pt');
+    $f['pdo']->prepare('UPDATE invites SET expires_at = :past WHERE id = :id')
+        ->execute(['past' => '2020-01-01 00:00:00', 'id' => $expired['id']]);
+    assert_throws(ValidationException::class, fn () => TeamService::register([
+        'token' => $expired['token'], 'email' => 'expirado@exemplo.pt', 'name' => 'Expirado',
+        'password' => 'Expirado2026!', 'password_confirm' => 'Expirado2026!',
+    ]), 'convite expirado');
+
+    assert_same(null, UserRepository::findByEmail('revogado@exemplo.pt'), 'revogado não criado');
+    assert_same(null, UserRepository::findByEmail('expirado@exemplo.pt'), 'expirado não criado');
+});
+
+test('T28', 'Registo valida email do convite e palavras-passe', function (): void {
+    $f = fresh_database();
+    $invite = invite_token($f['gestor'], 'convidado@exemplo.pt');
+
+    assert_throws(ValidationException::class, fn () => TeamService::register([
+        'token' => $invite['token'], 'email' => 'outro@exemplo.pt', 'name' => 'Outro',
+        'password' => 'Outro2026!', 'password_confirm' => 'Outro2026!',
+    ]), 'email diferente do convite');
+
+    assert_throws(ValidationException::class, fn () => TeamService::register([
+        'token' => $invite['token'], 'email' => 'convidado@exemplo.pt', 'name' => 'Convidado',
+        'password' => 'fraca', 'password_confirm' => 'fraca',
+    ]), 'palavra-passe fraca');
+
+    assert_throws(ValidationException::class, fn () => TeamService::register([
+        'token' => $invite['token'], 'email' => 'convidado@exemplo.pt', 'name' => 'Convidado',
+        'password' => 'Convidado2026!', 'password_confirm' => 'Diferente2026!',
+    ]), 'confirmação diferente');
+
+    assert_same(null, UserRepository::findByEmail('convidado@exemplo.pt'), 'nada criado');
+    assert_same(0, (int) InviteRepository::find($invite['id'])['used_by'], 'convite não consumido');
+});
+
+test('T29', 'Perfil do convite não pode ser elevado pelo formulário', function (): void {
+    $f = fresh_database();
+    $invite = invite_token($f['gestor'], 'colab.novo@exemplo.pt', 'colaborador');
+
+    $user = TeamService::register([
+        'token' => $invite['token'],
+        'email' => 'colab.novo@exemplo.pt',
+        'name' => 'Colab Novo',
+        'password' => 'Colab2026!',
+        'password_confirm' => 'Colab2026!',
+        'role' => 'gestor',
+    ]);
+
+    assert_same('colaborador', $user['role'], 'role do formulário é ignorado');
+
+    $managerInvite = invite_token($f['gestor'], 'gestor.novo@exemplo.pt', 'gestor');
+    $manager = TeamService::register([
+        'token' => $managerInvite['token'],
+        'email' => 'gestor.novo@exemplo.pt',
+        'name' => 'Gestor Novo',
+        'password' => 'Gestor2026!',
+        'password_confirm' => 'Gestor2026!',
+    ]);
+    assert_same('gestor', $manager['role'], 'convite de gestor cria gestor');
+});
+
+test('T30', 'Gestão de equipa protege o último gestor e contas próprias', function (): void {
+    $f = fresh_database();
+    $gestorId = (int) $f['gestor']['id'];
+
+    assert_throws(AuthorizationException::class, fn () => TeamService::setRole($f['gestor'], $gestorId, 'colaborador'), 'auto-despromoção');
+    assert_throws(AuthorizationException::class, fn () => TeamService::setActive($f['gestor'], $gestorId, false), 'auto-desativação');
+    assert_same('gestor', UserRepository::find($gestorId)['role'], 'perfil mantém-se');
+    assert_same(1, (int) UserRepository::find($gestorId)['active'], 'conta mantém-se ativa');
+    assert_same(1, UserRepository::activeManagerCount(), 'continua a haver um gestor');
+
+    $colabId = (int) $f['colaborador']['id'];
+    TeamService::setActive($f['gestor'], $colabId, false);
+    assert_same(0, (int) UserRepository::find($colabId)['active'], 'colaborador desativado');
+    assert_same(null, \ObraClara\Support\Auth::verifyCredentials('colaborador@obraclara.pt', 'Colab2026!'), 'login bloqueado');
+
+    $_SESSION['user_id'] = $colabId;
+    assert_same(null, \ObraClara\Support\Auth::user(), 'sessão rejeitada após desativação');
+    assert_true(!isset($_SESSION['user_id']), 'sessão limpa');
+});
+
+test('T31', 'Perfil valida email único e regista auditoria', function (): void {
+    $f = fresh_database();
+    $updated = AccountService::updateProfile($f['colaborador'], [
+        'name' => 'Rui Marques Atualizado',
+        'email' => 'RUI.NOVO@EXEMPLO.PT',
+    ]);
+
+    assert_same('Rui Marques Atualizado', $updated['name']);
+    assert_same('rui.novo@exemplo.pt', $updated['email'], 'email normalizado');
+    assert_throws(ValidationException::class, fn () => AccountService::updateProfile($updated, [
+        'name' => 'Outro Nome', 'email' => 'gestor@obraclara.pt',
+    ]), 'email duplicado');
+    assert_throws(ValidationException::class, fn () => AccountService::updateProfile($updated, [
+        'name' => 'A', 'email' => 'rui.novo@exemplo.pt',
+    ]), 'nome curto');
+
+    $events = AdminEventRepository::forTarget('user', (int) $updated['id']);
+    assert_true($events !== [], 'auditoria do perfil');
+    assert_same('perfil_alterado', $events[0]['action']);
+});
+
+test('T32', 'Alteração de palavra-passe exige atual e confirmação', function (): void {
+    $f = fresh_database();
+    $user = $f['colaborador'];
+
+    assert_throws(ValidationException::class, fn () => AccountService::changePassword($user, [
+        'current_password' => 'errada', 'password' => 'Nova2026!', 'password_confirm' => 'Nova2026!',
+    ]), 'palavra-passe atual errada');
+    assert_throws(ValidationException::class, fn () => AccountService::changePassword($user, [
+        'current_password' => 'Colab2026!', 'password' => 'curta', 'password_confirm' => 'curta',
+    ]), 'palavra-passe fraca');
+    assert_throws(ValidationException::class, fn () => AccountService::changePassword($user, [
+        'current_password' => 'Colab2026!', 'password' => 'Nova2026!', 'password_confirm' => 'Outra2026!',
+    ]), 'confirmação diferente');
+
+    AccountService::changePassword($user, [
+        'current_password' => 'Colab2026!', 'password' => 'Nova2026!', 'password_confirm' => 'Nova2026!',
+    ]);
+
+    assert_same(null, \ObraClara\Support\Auth::verifyCredentials('colaborador@obraclara.pt', 'Colab2026!'), 'antiga recusada');
+    assert_true(\ObraClara\Support\Auth::verifyCredentials('colaborador@obraclara.pt', 'Nova2026!') !== null, 'nova aceite');
+
+    $fresh = UserRepository::find((int) $user['id']);
+    assert_throws(ValidationException::class, fn () => AccountService::changePassword($fresh, [
+        'current_password' => 'Nova2026!', 'password' => 'Nova2026!', 'password_confirm' => 'Nova2026!',
+    ]), 'reutilização da mesma palavra-passe');
+});
+
+test('T33', 'PDF real contém valores, acentos e várias páginas quando necessário', function (): void {
+    $f = fresh_database();
+    $changeId = ChangeService::create($f['projects'][0], [
+        'title' => 'Pavimento vinílico — sala e hall',
+        'description' => 'Substituição do laminado por vinílico, com regularização do betão e rodapé novo. Acentuação: ção, ã, é, €.',
+        'amount' => '650,00',
+    ], $f['colaborador'], true);
+    ChangeService::decide($changeId, $f['gestor'], 'aprovar', 'Aprovado pelo cliente.');
+
+    $project = ProjectRepository::find($f['projects'][0]);
+    $pdf = ProjectPdfService::generate($project, ChangeRepository::forProject($f['projects'][0]));
+
+    assert_true(str_starts_with($pdf, '%PDF-1.4'), 'cabeçalho PDF');
+    assert_true(str_contains($pdf, '%%EOF'), 'fim PDF');
+    assert_true(str_contains($pdf, '/Type /Page'), 'objeto de página');
+    $needle = iconv('UTF-8', 'Windows-1252//TRANSLIT', '8 650,00 €');
+    assert_true(str_contains($pdf, (string) $needle), 'orçamento atualizado no PDF');
+    assert_true(str_contains($pdf, 'Pavimento vin') || str_contains($pdf, 'Pavimento'), 'alteração no PDF');
+
+    for ($i = 0; $i < 9; $i++) {
+        ChangeService::create($f['projects'][1], [
+            'title' => 'Trabalho adicional ' . $i,
+            'description' => str_repeat('Descrição extensa com acentuação e detalhe técnico. ', 18),
+            'amount' => '10,00',
+        ], $f['colaborador'], true);
+    }
+    $longProject = ProjectRepository::find($f['projects'][1]);
+    $longPdf = ProjectPdfService::generate($longProject, ChangeRepository::forProject($f['projects'][1]));
+    preg_match('/\/Count (\d+)/', $longPdf, $matches);
+    assert_true((int) ($matches[1] ?? 0) >= 2, 'PDF longo tem várias páginas');
+
+    Lang::setLocale('en');
+    $englishPdf = ProjectPdfService::generate($project, ChangeRepository::forProject($f['projects'][0]));
+    assert_true(str_contains($englishPdf, '€8,650.00') || str_contains($englishPdf, '8,650.00'), 'PDF em inglês');
+    Lang::setLocale('pt');
+});
+
+test('T34', 'Dicionários PT/EN têm as mesmas chaves e cobrem as vistas', function (): void {
+    $pt = require OBRACLARA_ROOT . '/lang/pt.php';
+    $en = require OBRACLARA_ROOT . '/lang/en.php';
+
+    assert_same([], array_values(array_diff(array_keys($pt), array_keys($en))), 'chaves em falta em EN');
+    assert_same([], array_values(array_diff(array_keys($en), array_keys($pt))), 'chaves extra em EN');
+
+    $used = [];
+    $directories = [OBRACLARA_ROOT . '/app/views', OBRACLARA_ROOT . '/app/Http', OBRACLARA_ROOT . '/app/Services', OBRACLARA_ROOT . '/app/Support'];
+    foreach ($directories as $directory) {
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+        foreach ($iterator as $file) {
+            if (!$file->isFile() || $file->getExtension() !== 'php') {
+                continue;
+            }
+            $source = (string) file_get_contents($file->getPathname());
+            preg_match_all("/(?<![a-z_])t\('([a-z0-9_.]+)'\)/", $source, $matches);
+            foreach ($matches[1] as $key) {
+                $used[$key] = true;
+            }
+        }
+    }
+
+    $missing = array_values(array_diff(array_keys($used), array_keys($pt)));
+    assert_same([], $missing, 'chaves usadas sem tradução');
+
+    Lang::setLocale('en');
+    assert_same('Dashboard', Lang::t('nav.dashboard'));
+    assert_same('€8,650.00', \ObraClara\Support\Money::formatFor(865000, 'en'));
+    assert_same('8 650,00 €', \ObraClara\Support\Money::formatFor(865000, 'pt'));
+    Lang::setLocale('pt');
+});
+
+test('T35', 'Tutorial concluído fica guardado por utilizador', function (): void {
+    $f = fresh_database();
+    assert_same(null, $f['colaborador']['tour_completed_at'], 'tutorial pendente');
+    AccountService::completeTour((int) $f['colaborador']['id']);
+
+    $updated = UserRepository::find((int) $f['colaborador']['id']);
+    $other = UserRepository::find((int) $f['outro']['id']);
+    assert_true($updated['tour_completed_at'] !== null, 'estado guardado');
+    assert_same(null, $other['tour_completed_at'], 'outro utilizador não foi afetado');
+});
+
+test('T36', 'Migrações atualizam base antiga sem perder dados e são idempotentes', function (): void {
+    $path = dirname(__DIR__) . '/tmp/test-migration.sqlite';
+    foreach ([$path, $path . '-wal', $path . '-shm'] as $file) {
+        if (is_file($file)) {
+            @unlink($file);
+        }
+    }
+
+    $pdo = new PDO('sqlite:' . $path);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->exec('PRAGMA foreign_keys = ON');
+    $pdo->exec("CREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+        password_hash TEXT NOT NULL, role TEXT NOT NULL, active INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL
+    )");
+    $pdo->exec("INSERT INTO users (name, email, password_hash, role, active, created_at)
+                VALUES ('Conta Antiga', 'antiga@exemplo.pt', 'hash', 'gestor', 1, '2026-01-01 00:00:00')");
+
+    $executed = Migrator::run($pdo);
+    assert_true(in_array('2026_10_29_001_preferencias_utilizador', $executed, true), 'migração de colunas');
+    assert_true(in_array('2026_10_29_002_convites_e_auditoria', $executed, true), 'migração de tabelas');
+
+    $columns = array_column($pdo->query('PRAGMA table_info(users)')->fetchAll(), 'name');
+    foreach (['locale', 'tour_completed_at', 'last_login_at', 'updated_at'] as $column) {
+        assert_true(in_array($column, $columns, true), 'coluna ' . $column);
+    }
+    assert_same('Conta Antiga', $pdo->query('SELECT name FROM users WHERE id = 1')->fetchColumn(), 'dados preservados');
+    assert_same('pt', $pdo->query('SELECT locale FROM users WHERE id = 1')->fetchColumn(), 'preferência por defeito');
+
+    $tables = $pdo->query("SELECT name FROM sqlite_master WHERE type = 'table'")->fetchAll(PDO::FETCH_COLUMN);
+    foreach (['invites', 'admin_events', 'schema_migrations'] as $table) {
+        assert_true(in_array($table, $tables, true), 'tabela ' . $table);
+    }
+
+    assert_same([], Migrator::pending($pdo), 'sem migrações pendentes');
+    assert_same([], Migrator::run($pdo), 'segunda execução não altera');
+
+    $pdo = null;
+    foreach ([$path, $path . '-wal', $path . '-shm'] as $file) {
+        if (is_file($file)) {
+            @unlink($file);
+        }
+    }
+});
+
+test('T37', 'Email duplicado é recusado mesmo com convite válido', function (): void {
+    $f = fresh_database();
+    $invite = invite_token($f['gestor'], 'duplicado@exemplo.pt');
+
+    // Simula uma corrida: a conta foi criada depois de o convite ser emitido.
+    UserRepository::create([
+        'name' => 'Conta Existente',
+        'email' => 'duplicado@exemplo.pt',
+        'password_hash' => password_hash('Existente2026!', PASSWORD_DEFAULT),
+        'role' => 'colaborador',
+        'locale' => 'pt',
+        'created_at' => now(),
+    ]);
+
+    assert_throws(ValidationException::class, fn () => TeamService::register([
+        'token' => $invite['token'],
+        'email' => 'duplicado@exemplo.pt',
+        'name' => 'Duplicado',
+        'password' => 'Duplicado2026!',
+        'password_confirm' => 'Duplicado2026!',
+    ]), 'email duplicado');
+
+    assert_same(null, InviteRepository::find($invite['id'])['used_at'], 'convite não consumido');
 });
 
 /* --------------------------------------------------------------------------

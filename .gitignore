@@ -16,6 +16,7 @@
 *.db-wal
 *.db-shm
 /backups/
+/database/backups/
 /database/private/
 /database/storage/
 /storage/

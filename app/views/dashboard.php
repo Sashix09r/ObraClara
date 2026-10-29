@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use ObraClara\Support\Labels;
-use ObraClara\Support\Money;
 
 /**
  * @var array<string, mixed> $user
@@ -12,60 +11,62 @@ use ObraClara\Support\Money;
 $isManager = $user['role'] === 'gestor';
 $firstName = explode(' ', (string) $user['name'])[0];
 $hour = (int) date('G');
-$greeting = $hour < 12 ? 'Bom dia' : ($hour < 20 ? 'Boa tarde' : 'Boa noite');
+$greeting = $hour < 12 ? t('dashboard.greeting_morning') : ($hour < 20 ? t('dashboard.greeting_afternoon') : t('dashboard.greeting_evening'));
 ?>
 <section class="page-head">
     <div>
-        <p class="eyebrow">Visão geral</p>
+        <p class="eyebrow"><?= e(t('dashboard.eyebrow')) ?></p>
         <h1><?= e($greeting) ?>, <?= e($firstName) ?></h1>
-        <p class="text-muted">Estado atual das obras e das alterações à espera de decisão.</p>
+        <p class="text-muted"><?= e(t('dashboard.subtitle')) ?></p>
     </div>
     <?php if ($isManager): ?>
         <div class="page-head__actions">
-            <a class="btn btn--ghost" href="<?= e(url('/clientes/criar')) ?>">Novo cliente</a>
+            <a class="btn btn--ghost" href="<?= e(url('/clientes/criar')) ?>"><?= e(t('dashboard.new_client')) ?></a>
             <a class="btn btn--primary" href="<?= e(url('/obras/criar')) ?>">
-                <?= icon('plus') ?> Nova obra
+                <?= icon('plus') ?> <?= e(t('dashboard.new_project')) ?>
             </a>
         </div>
     <?php endif; ?>
 </section>
 
 <div class="kpi-grid">
-    <article class="card kpi">
+    <article class="card kpi" data-tour-id="dashboard-kpis"
+             data-tour-title="<?= e(t('tour.dashboard_title')) ?>"
+             data-tour-text="<?= e(t('tour.dashboard_text')) ?>">
         <span class="kpi__icon"><?= icon('projects') ?></span>
-        <p class="kpi__label">Obras ativas</p>
+        <p class="kpi__label"><?= e(t('dashboard.active_projects')) ?></p>
         <p class="kpi__value"><?= e((string) $stats['active_projects']) ?></p>
-        <p class="kpi__hint"><?= e((string) $stats['active_clients']) ?> clientes ativos</p>
+        <p class="kpi__hint"><?= e(t('dashboard.active_clients', ['count' => (string) $stats['active_clients']])) ?></p>
     </article>
 
     <article class="card kpi<?= $stats['pending_changes'] > 0 ? ' kpi--attention' : '' ?>">
         <span class="kpi__icon"><?= icon('clock') ?></span>
-        <p class="kpi__label">Alterações pendentes</p>
+        <p class="kpi__label"><?= e(t('dashboard.pending')) ?></p>
         <p class="kpi__value"><?= e((string) $stats['pending_changes']) ?></p>
-        <p class="kpi__hint"><?= e((string) $stats['draft_changes']) ?> em rascunho</p>
+        <p class="kpi__hint"><?= e(t('dashboard.drafts', ['count' => (string) $stats['draft_changes']])) ?></p>
     </article>
 
     <article class="card kpi">
         <span class="kpi__icon"><?= icon('check') ?></span>
-        <p class="kpi__label">Custos aprovados</p>
-        <p class="kpi__value kpi__value--money"><?= e(Money::format((int) $stats['approved_extra'])) ?></p>
-        <p class="kpi__hint">aprovadas em obras não arquivadas</p>
+        <p class="kpi__label"><?= e(t('dashboard.approved_costs')) ?></p>
+        <p class="kpi__value kpi__value--money"><?= e(money((int) $stats['approved_extra'])) ?></p>
+        <p class="kpi__hint"><?= e(t('dashboard.approved_hint')) ?></p>
     </article>
 
     <article class="card kpi kpi--total">
         <span class="kpi__icon"><?= icon('money') ?></span>
-        <p class="kpi__label">Orçamento previsto</p>
-        <p class="kpi__value kpi__value--money"><?= e(Money::format((int) $stats['forecast_total'])) ?></p>
-        <p class="kpi__hint">obras não arquivadas</p>
+        <p class="kpi__label"><?= e(t('dashboard.forecast')) ?></p>
+        <p class="kpi__value kpi__value--money"><?= e(money((int) $stats['forecast_total'])) ?></p>
+        <p class="kpi__hint"><?= e(t('dashboard.forecast_hint')) ?></p>
     </article>
 </div>
 
 <div class="grid grid--2-1">
-    <section class="card" aria-labelledby="pendentes-title">
+    <section class="card" aria-labelledby="pendentes-title" data-tour-id="dashboard-pending">
         <header class="card__head">
             <div>
-                <h2 id="pendentes-title">Alterações por decidir</h2>
-                <p class="text-muted">Só o gestor aprova ou rejeita. Enquanto pendentes, não alteram o orçamento.</p>
+                <h2 id="pendentes-title"><?= e(t('dashboard.pending_title')) ?></h2>
+                <p class="text-muted"><?= e(t('dashboard.pending_desc')) ?></p>
             </div>
             <span class="count-pill"><?= e((string) count($stats['pending'])) ?></span>
         </header>
@@ -73,39 +74,39 @@ $greeting = $hour < 12 ? 'Bom dia' : ($hour < 20 ? 'Boa tarde' : 'Boa noite');
         <?php if ($stats['pending'] === []): ?>
             <div class="empty-state">
                 <span class="empty-state__icon"><?= icon('check') ?></span>
-                <h3>Nada pendente</h3>
-                <p>Não existem alterações à espera de decisão neste momento.</p>
+                <h3><?= e(t('dashboard.nothing_pending')) ?></h3>
+                <p><?= e(t('dashboard.nothing_pending_text')) ?></p>
             </div>
         <?php else: ?>
             <div class="table-wrap">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">Alteração</th>
-                            <th scope="col">Obra / cliente</th>
-                            <th scope="col" class="text-right">Valor</th>
-                            <th scope="col">Submetida</th>
-                            <th scope="col"><span class="sr-only">Ações</span></th>
+                            <th scope="col"><?= e(t('dashboard.col_change')) ?></th>
+                            <th scope="col"><?= e(t('dashboard.col_project')) ?></th>
+                            <th scope="col" class="text-right"><?= e(t('dashboard.col_value')) ?></th>
+                            <th scope="col"><?= e(t('dashboard.col_submitted')) ?></th>
+                            <th scope="col"><span class="sr-only"><?= e(t('common.actions')) ?></span></th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($stats['pending'] as $change): ?>
                             <tr>
-                                <td data-label="Alteração">
+                                <td data-label="<?= e(t('dashboard.col_change')) ?>">
                                     <strong><?= e($change['title']) ?></strong>
-                                    <span class="cell-sub">por <?= e($change['author_name']) ?></span>
+                                    <span class="cell-sub"><?= e(t('common.by')) ?> <?= e($change['author_name']) ?></span>
                                 </td>
-                                <td data-label="Obra">
+                                <td data-label="<?= e(t('dashboard.col_project')) ?>">
                                     <a href="<?= e(url('/obras/' . $change['project_id'])) ?>"><?= e($change['project_title']) ?></a>
                                     <span class="cell-sub"><?= e($change['client_name']) ?></span>
                                 </td>
-                                <td data-label="Valor" class="text-right money"><?= e(Money::format((int) $change['amount_cents'])) ?></td>
-                                <td data-label="Submetida"><?= e(format_datetime($change['submitted_at'])) ?></td>
-                                <td data-label="Ação" class="text-right">
+                                <td data-label="<?= e(t('dashboard.col_value')) ?>" class="text-right money"><?= e(money((int) $change['amount_cents'])) ?></td>
+                                <td data-label="<?= e(t('dashboard.col_submitted')) ?>"><?= e(format_datetime($change['submitted_at'])) ?></td>
+                                <td data-label="<?= e(t('common.action')) ?>" class="text-right">
                                     <?php if ($isManager): ?>
-                                        <a class="btn btn--sm btn--primary" href="<?= e(url('/alteracoes/' . $change['id'] . '/decidir')) ?>">Decidir</a>
+                                        <a class="btn btn--sm btn--primary" href="<?= e(url('/alteracoes/' . $change['id'] . '/decidir')) ?>"><?= e(t('dashboard.decide')) ?></a>
                                     <?php else: ?>
-                                        <span class="text-muted text-sm">Aguarda gestor</span>
+                                        <span class="text-muted text-sm"><?= e(t('dashboard.waiting_manager')) ?></span>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -118,12 +119,12 @@ $greeting = $hour < 12 ? 'Bom dia' : ($hour < 20 ? 'Boa tarde' : 'Boa noite');
 
     <aside class="card" aria-labelledby="atividade-title">
         <header class="card__head">
-            <h2 id="atividade-title">Atividade recente</h2>
+            <h2 id="atividade-title"><?= e(t('dashboard.activity')) ?></h2>
         </header>
 
         <?php if ($stats['events'] === []): ?>
             <div class="empty-state empty-state--sm">
-                <p>Ainda não existem eventos registados.</p>
+                <p><?= e(t('dashboard.no_events')) ?></p>
             </div>
         <?php else: ?>
             <ul class="timeline">
@@ -137,7 +138,7 @@ $greeting = $hour < 12 ? 'Bom dia' : ($hour < 20 ? 'Boa tarde' : 'Boa noite');
                     </li>
                 <?php endforeach; ?>
             </ul>
-            <a class="link-arrow" href="<?= e(url('/historico')) ?>">Ver histórico completo <?= icon('arrow') ?></a>
+            <a class="link-arrow" href="<?= e(url('/historico')) ?>"><?= e(t('dashboard.view_history')) ?> <?= icon('arrow') ?></a>
         <?php endif; ?>
     </aside>
 </div>
@@ -145,44 +146,44 @@ $greeting = $hour < 12 ? 'Bom dia' : ($hour < 20 ? 'Boa tarde' : 'Boa noite');
 <section class="card" aria-labelledby="obras-title">
     <header class="card__head">
         <div>
-            <h2 id="obras-title">Obras em acompanhamento</h2>
-            <p class="text-muted">Orçamento atualizado = base + alterações aprovadas.</p>
+            <h2 id="obras-title"><?= e(t('dashboard.projects_title')) ?></h2>
+            <p class="text-muted"><?= e(t('dashboard.projects_desc')) ?></p>
         </div>
-        <a class="link-arrow" href="<?= e(url('/obras')) ?>">Todas as obras <?= icon('arrow') ?></a>
+        <a class="link-arrow" href="<?= e(url('/obras')) ?>"><?= e(t('dashboard.all_projects')) ?> <?= icon('arrow') ?></a>
     </header>
 
     <?php if ($stats['projects'] === []): ?>
         <div class="empty-state">
             <span class="empty-state__icon"><?= icon('projects') ?></span>
-            <h3>Ainda não há obras</h3>
-            <p>Cria o primeiro cliente e a primeira obra para começares a registar alterações.</p>
+            <h3><?= e(t('dashboard.no_projects')) ?></h3>
+            <p><?= e(t('dashboard.no_projects_text')) ?></p>
         </div>
     <?php else: ?>
         <div class="table-wrap">
             <table class="table">
                 <thead>
                     <tr>
-                        <th scope="col">Obra</th>
-                        <th scope="col">Cliente</th>
-                        <th scope="col">Estado</th>
-                        <th scope="col" class="text-right">Base</th>
-                        <th scope="col" class="text-right">Aprovado</th>
-                        <th scope="col" class="text-right">Atualizado</th>
+                        <th scope="col"><?= e(t('dashboard.col_project_name')) ?></th>
+                        <th scope="col"><?= e(t('dashboard.col_client')) ?></th>
+                        <th scope="col"><?= e(t('dashboard.col_state')) ?></th>
+                        <th scope="col" class="text-right"><?= e(t('dashboard.col_base')) ?></th>
+                        <th scope="col" class="text-right"><?= e(t('dashboard.col_approved')) ?></th>
+                        <th scope="col" class="text-right"><?= e(t('dashboard.col_updated')) ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($stats['projects'] as $project): ?>
                         <tr>
-                            <td data-label="Obra">
+                            <td data-label="<?= e(t('dashboard.col_project_name')) ?>">
                                 <a class="cell-strong" href="<?= e(url('/obras/' . $project['id'])) ?>"><?= e($project['title']) ?></a>
                             </td>
-                            <td data-label="Cliente"><?= e($project['client_name']) ?></td>
-                            <td data-label="Estado">
+                            <td data-label="<?= e(t('dashboard.col_client')) ?>"><?= e($project['client_name']) ?></td>
+                            <td data-label="<?= e(t('dashboard.col_state')) ?>">
                                 <span class="badge badge--<?= e($project['status']) ?>"><?= e(Labels::projectStatus($project['status'])) ?></span>
                             </td>
-                            <td data-label="Base" class="text-right money"><?= e(Money::format((int) $project['base_budget_cents'])) ?></td>
-                            <td data-label="Aprovado" class="text-right money"><?= e(Money::format((int) $project['approved_cents'])) ?></td>
-                            <td data-label="Atualizado" class="text-right money money--strong"><?= e(Money::format((int) $project['updated_budget_cents'])) ?></td>
+                            <td data-label="<?= e(t('dashboard.col_base')) ?>" class="text-right money"><?= e(money((int) $project['base_budget_cents'])) ?></td>
+                            <td data-label="<?= e(t('dashboard.col_approved')) ?>" class="text-right money"><?= e(money((int) $project['approved_cents'])) ?></td>
+                            <td data-label="<?= e(t('dashboard.col_updated')) ?>" class="text-right money money--strong"><?= e(money((int) $project['updated_budget_cents'])) ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

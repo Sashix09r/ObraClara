@@ -40,7 +40,7 @@ final class ChangeRepository
         $change = $statement->fetch();
 
         if (!$change) {
-            throw new NotFoundException('A alteração indicada não existe.');
+            throw new NotFoundException(t('validation.change_not_found'));
         }
 
         return $change;
