@@ -24,8 +24,9 @@ de ponta a ponta, encontrar falhas reais e corrigi-las antes da apresentação.
 | 9 | Aprovar com observação | Orçamento 8 650,00 € e histórico atualizados | PASSOU |
 | 10 | Ver o resultado da aprovação | Página saltou para `#alteracao-1` (scroll 812 px); mensagem e cartões de orçamento fora do ecrã | **FALHOU** |
 
-Os tempos de resposta do servidor medidos no browser foram **36 ms a 198 ms** por página
-(dashboard 198 ms, obra 36 ms, decisão 51 ms), sem falhas de rede.
+No browser, cada navegação completa (pedido + render) levou **36 ms a 198 ms**
+(dashboard 198 ms, obra 36 ms, decisão 51 ms), sem falhas de rede. A cronometragem
+separada dos pedidos HTTP está na secção 3.1.
 
 ### 1.1 Segundo ensaio, depois das correções (11:30–11:45)
 
